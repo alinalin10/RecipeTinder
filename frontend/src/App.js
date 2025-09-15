@@ -19,3 +19,5 @@ function App() {
 }
 
 export default App;
+
+//<Route path="/" element={<Home />} /> line 12

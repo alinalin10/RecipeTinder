@@ -11,3 +11,65 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.card-stack {
+  position: relative;
+  height: 100vh;
+  background-color: white;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.card {
+  position: absolute;
+  width: 600px;
+  background: #f9f9f5;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 440px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 1rem;
+  text-align: center;
+}
+
+.card-content h1 {
+  margin: 2rem 0 0 0;
+  font-size: 2.1rem;
+  text-align: left;
+}
+
+.card-content h2 {
+  margin: 0 0 0 0;
+  font-size: 1.4rem;
+  color: #f2747d;
+}
+
+.card-content p {
+  margin: 1px 0 0 0;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.recipe-link {
+  margin: 1px 0 0 0;
+  display: inline-block;
+  font-size: 0.9rem;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.same-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
