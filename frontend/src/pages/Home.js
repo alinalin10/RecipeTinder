@@ -1,5 +1,7 @@
 import React from 'react'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
 
+// Put data for cards here (first card = top card)
 const cardData = [
     {
         id: 1,
@@ -21,6 +23,7 @@ const cardData = [
     },
 ]
 
+// Returns the stack of cards and all their data
 const SwipeCards = () => {
     return (
         <div
@@ -33,8 +36,24 @@ const SwipeCards = () => {
     );
 };
 
+// Creates card component (id = place on stack, url = image, name = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
 const Card = ({ id, url, name, user, rating, date, recipe, index }) => {
-    return <div className='card' style={{ zIndex: cardData.length - index }}>
+    // As card moves left and right it rotates sideways and also starts to disappear
+    const x = useMotionValue(0);
+    const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
+    const rotate = useTransform(x, [-250, 250], [-18, 18])
+
+
+    // Contains all card info
+    return <motion.div
+        className='card'
+        style={{ zIndex: cardData.length - index, x, opacity, rotate }}
+        drag="x"
+        dragConstraints={{
+            left: 0,
+            right: 0,
+        }}
+    >
         <img src={url} alt={name} className="card-image"/>
         <div className="card-content">
             <h1 className="recipe-name">{name}</h1>
@@ -47,13 +66,7 @@ const Card = ({ id, url, name, user, rating, date, recipe, index }) => {
                 <a href={recipe} className="recipe-link">View Recipe</a>
             </div>
         </div>
-    </div>
+    </motion.div>
 }
 
 export default SwipeCards
-
-/*<h1>{name}</h1>
-<h2>{user}</h2>
-<h2>{rating}</h2>
-<p>{date}</p>
-<a href={recipe}>View Recipe</a>*/

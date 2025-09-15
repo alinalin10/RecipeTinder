@@ -29,6 +29,10 @@ code {
   overflow: hidden;
 }
 
+.card:hover {
+  cursor: grab;
+}
+
 .card-image {
   width: 100%;
   height: 440px;
