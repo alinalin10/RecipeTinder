@@ -30,6 +30,7 @@ const SwipeCards = () => {
         <div
             className="card-stack"
         >
+            <img src="/assets/icon-x.png" alt="x" className="icon-x"/>
             {cards.map((card, index) => {
                 return <Card key={card.id}
                 cards = {cards}
@@ -37,6 +38,7 @@ const SwipeCards = () => {
                 {...card}
                 index={index} />
             })}
+            <img src="/assets/icon-heart.png" alt="heart" className="icon-heart"/>
         </div>
     );
 };

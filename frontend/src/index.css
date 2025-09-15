@@ -53,7 +53,7 @@ code {
 .card-content h2 {
   margin: 0 0 0 0;
   font-size: 1.4rem;
-  color: #f2747d;
+  color: #e6645a;
 }
 
 .card-content p {
@@ -76,4 +76,20 @@ code {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.4rem;
+}
+
+.icon-x {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  top: 40%;
+  left: 25%;
+}
+
+.icon-heart {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  top: 40%;
+  right: 25%;
 }
