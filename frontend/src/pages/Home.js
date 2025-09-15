@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 
 // Put data for cards here (first card = top card)
@@ -25,24 +25,36 @@ const cardData = [
 
 // Returns the stack of cards and all their data
 const SwipeCards = () => {
+    const [cards, setCards] = useState(cardData);
     return (
         <div
             className="card-stack"
         >
-            {cardData.map((card, index) => {
-                return <Card key={card.id} {...card} index={index} />
+            {cards.map((card, index) => {
+                return <Card key={card.id}
+                cards = {cards}
+                setCards = {setCards}
+                {...card}
+                index={index} />
             })}
         </div>
     );
 };
 
 // Creates card component (id = place on stack, url = image, name = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
-const Card = ({ id, url, name, user, rating, date, recipe, index }) => {
+const Card = ({ id, url, cards, setCards, name, user, rating, date, recipe, index }) => {
     // As card moves left and right it rotates sideways and also starts to disappear
     const x = useMotionValue(0);
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
     const rotate = useTransform(x, [-250, 250], [-18, 18])
 
+    // Front card disappears when dragged and let go
+    const handleDragEnd = () => {
+        if (Math.abs(x.get()) > 150) {
+            // Get rid of front card when dragged
+            setCards(pv => pv.filter(v => v.id !== id))
+        }
+    }
 
     // Contains all card info
     return <motion.div
@@ -53,6 +65,7 @@ const Card = ({ id, url, name, user, rating, date, recipe, index }) => {
             left: 0,
             right: 0,
         }}
+        onDragEnd={handleDragEnd}
     >
         <img src={url} alt={name} className="card-image"/>
         <div className="card-content">
