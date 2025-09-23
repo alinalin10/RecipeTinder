@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 
 const app = express();
 
+const userRecipeRoutes = require("./routes/User-Recipe-Routes")
+
 // middleware
 app.use(express.json())
 
@@ -15,6 +17,9 @@ app.use((req, res, next)=> {
 app.get('/', (req, res) => {
     res.json({msg: 'Welcome to RecipeTinder API'})
 })
+
+// routes
+app.use('/api/user-recipes', userRecipeRoutes)
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
