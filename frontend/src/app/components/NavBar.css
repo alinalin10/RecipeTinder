@@ -1,0 +1,79 @@
+
+nav {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  padding: 12px 24px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Left Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  text-decoration: none;
+}
+
+.logo-img {
+  height: 32px;
+  width: 32px;
+  margin-right: 8px;
+}
+
+/* Container for links + actions */
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Links */
+.links {
+  display: flex;
+  gap: 20px;
+  margin-right: 35px;
+}
+
+.links a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.links a:hover {
+  color: #e91e63;
+}
+
+/* Actions (signup + profile) */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.signup-btn {
+  padding: 6px 12px;
+  background: #e91e63;
+  font-size: 13px;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  margin-right: 20px;
+}
+
+.signup-btn:hover {
+  background: #c2185b;
+}
+
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+}
