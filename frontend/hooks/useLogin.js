@@ -1,15 +1,36 @@
+"use client"
 import {useState } from 'react'
 import { useAuthContext, userAuthContext } from './useAuthContext'
 
 export const useLogin = () => {
     const [error, setError] = useState(null)
-    const [isLoading, setIsLoading] = useState(null)
+    const [success, setSuccess] = useState(null);
+    const [isLoading, setIsLoading] = useState(false)
     const {dispatch} = useAuthContext()
+
+    const clearError = () => {
+        setError(null)
+    }
 
     const login = async (email, password) => {
         setIsLoading(true)
         setError(null)
+        setSuccess(null)
 
+        //------- Requires Valid fields + emails (can be alloc to backend if u prefer) --------
+        if (!email || !password) {
+            setError('All fields are required');
+            return;
+        }
+
+        const emailPattern = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+        if (!emailPattern.test(email)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+        //--------------------------------------------------------------------------------------
+
+        // API Call to backend
         const response = await fetch('/api/user/login', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -18,22 +39,26 @@ export const useLogin = () => {
 
         const json = await response.json()
 
-        if (!response.ok)
-        {
-            setIsLoading(false)
-            setError(json.error)
+        //Response handling
+        setIsLoading(false);
+        if (!response.ok) {
+            console.log(json.error);
+            setError(json.error);
         }
+
         if (response.ok)
         {
+            setError(null);
+            console.log('User Logged in');
+            setSuccess('Logged In Successfully');
+
             //save the user to local storage
             localStorage.setItem('user', JSON.stringify(json))
 
             //update authcontext
             dispatch({type: 'LOGIN', payload: json})
-            
-            setIsLoading(false)
         }
     }
 
-    return {login, isLoading, error}
+    return {login, isLoading, error, success, clearError}
 }
