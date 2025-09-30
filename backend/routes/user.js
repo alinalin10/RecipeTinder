@@ -18,4 +18,9 @@ router.patch('/:userId/preferences', updateUserPreferences)
 // get user preferences
 router.get('/:userId/preferences', getUserPreferences)
 
+// debug ping route to verify routing and server reachability
+router.get('/ping', (req, res) => {
+	res.json({ ok: true, path: req.path, method: req.method })
+})
+
 module.exports = router
