@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from 'react'
-import Card from './Card'
+import Card, { type CardData } from './Card'
 import styles from './swipeCards.module.css';
 
 
 // Returns the stack of cards and all their data
-const SwipeCards = ({ cardData }: { cardData: any[] }) => {
-    const [cards, setCards] = useState(cardData ?? []);
+const SwipeCards = ({ cardData }: { cardData: CardData[] }) => {
+    const [cards, setCards] = useState<CardData[]>(cardData ?? []);
 
       const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage

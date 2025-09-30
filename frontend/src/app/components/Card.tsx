@@ -1,37 +1,45 @@
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import styles from './swipeCards.module.css';
 
-// Creates card component (id = place on stack, image = image, name = food, user = uploader, rating = rating, time = date uploaded, recipe = link to recipe, index = used to organize stack)
-const Card = ({
-  id,
-  image,
-  cards,
-  setCards,
-  name,
-  title,
-  user,
-  rating,
-  difficulty,
-  time,
-  recipe,
-  recipeType = 'userMade', // default to userMade if no type provided
-  index
-}: {
-  id: number | string,
-  image: string,
-  cards: any[],
-  setCards: React.Dispatch<React.SetStateAction<any[]>>,
-  name: string,
-  title?: string,
-  user?: string,
-  rating?: string,
-  difficulty?: string,
-  time?: string,
-  recipeType: string,
-  recipe?: string,
-  index: number
-}) => {
+export interface CardData {
+  id?: number | string;
+  _id?: string;
+  url?: string;
+  image?: string;
+  name?: string;
+  title?: string;
+  user?: string;
+  rating?: string;
+  difficulty?: string;
+  date?: string;
+  time?: string;
+  recipe?: string;
+  recipeType?: string;
+  fullRecipeData?: any;
+}
 
+interface CardProps {
+  id?: number | string;
+  _id?: string;
+  url?: string;
+  image?: string;
+  cards: CardData[];
+  setCards: React.Dispatch<React.SetStateAction<CardData[]>>;
+  name?: string;
+  title?: string;
+  user?: string;
+  rating?: string;
+  difficulty?: string;
+  date?: string;
+  time?: string;
+  recipe?: string;
+  recipeType?: string;
+  index: number;
+  fullRecipeData?: any;
+}
+
+// Creates card component (id = place on stack, url/image = image, name/title = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
+const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating, difficulty, date, time, recipe, recipeType = 'userMade', index, fullRecipeData }: CardProps) => {
     // As card moves left and right it rotates sideways and also starts to disappear
     const x = useMotionValue(0);
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
@@ -77,7 +85,7 @@ const Card = ({
                 stiffness: 200,
                 damping: 25,
                 onComplete: () => {
-                    setCards(prev => prev.filter(v => (v.id || v._id) !== id));
+                    setCards((prev: CardData[]) => prev.filter((v: CardData) => (v.id || v._id) !== (id || _id)));
                 }
             });
 
@@ -88,6 +96,10 @@ const Card = ({
             animate(x, 0, { type: 'spring', stiffness: 300, damping: 25 });
         }
     }
+
+    const imageUrl = url || image;
+    const recipeName = name || title;
+    const cardId = id || _id;
 
     // Contains all card info
     return <motion.div
@@ -100,19 +112,20 @@ const Card = ({
         }}
         onDragEnd={handleDragEnd}
     >
-        <img src={image} alt={name} className={styles['card-image']}/>
+        <img src={imageUrl} alt={recipeName} className={styles['card-image']}/>
         <div className={styles['card-content']}>
-            <h1 className={styles['recipe-name']}>{name || title}</h1>
+            <h1 className={styles['recipe-name']}>{recipeName}</h1>
             <div className={styles['same-row']}>
-            <h2>{"@" + user || "@user"}</h2>
-            <h2>{rating || "⭐ 5.0"}</h2>
+                <h2>{"@" + (user || "user")}</h2>
+                <h2>{rating || "⭐ 5.0"}</h2>
             </div>
             <div className={styles['same-row']}>
-            <p>{time}</p>
-            <a href={recipe || "/recipe-description/" + id} className={styles['recipe-link']}>View Recipe</a>
+                <p>{time || date || "October 23, 2025"}</p>
+                <a href={recipe || "/recipe-description/" + cardId} className={styles['recipe-link']}>View Recipe</a>
             </div>
         </div>
     </motion.div>
 }
 
 export default Card
+export type { CardData }
