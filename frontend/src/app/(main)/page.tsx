@@ -15,6 +15,7 @@ interface CardData {
   // Full recipe data for detailed view
   fullRecipeData: Recipe;
 }
+
 export default function Home() {
   const { recipes, loading, error, getRandomRecipes } = useRecipes();
   const [cardData, setCardData] = useState<CardData[]>([]);
