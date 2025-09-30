@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 import SwipeCards from '../components/SwipeCard';
@@ -25,6 +26,8 @@ const cardData = [
 ]
 
 
+=======
+>>>>>>> ef75794 (recipe page)
 export default function Home() {
   return (
     <SwipeCards cardData={cardData} />
