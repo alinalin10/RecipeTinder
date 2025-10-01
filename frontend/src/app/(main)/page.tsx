@@ -1,5 +1,4 @@
 
-
 import SwipeCards from '../components/SwipeCard';
 
 // Put data for cards here (first card = top card)
