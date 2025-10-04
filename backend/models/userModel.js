@@ -41,12 +41,17 @@ const userSchema = new Schema({
 
 
     recipes: [{
-        spoonacularId: { type: Number, required: true }, // ID from Spoonacular
-        title: { type: String, required: true },
-        image: { type: String },
-        ingredients: { type: [String], required: true }, 
-        instructions: { type: String, required: true },
-        time: { type: Number },
+        recipeType: { 
+            type: String, 
+            required: true, 
+            enum: ['spoonacular', 'userMade'], // tells where recipe comes from (spoonacular API or user-created)
+            default: 'spoonacular'
+        },
+        recipeId: { 
+            type: mongoose.Schema.Types.Mixed, // ID Number for Spoonacular, ObjectId for user-made
+            required: true 
+        },
+        savedAt: { type: Date, default: Date.now }
     }],
 
     //embedded documents: pantry items and preferences below
