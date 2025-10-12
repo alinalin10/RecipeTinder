@@ -1,14 +1,31 @@
 
+import SwipeCards from '../components/SwipeCard';
+
+// Put data for cards here (first card = top card)
+const cardData = [
+    {
+        id: 1,
+        url: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2016/10/11/1/FNK_Simple-Homemade-Pancakes_s4x3.jpg.rend.hgtvcom.616.462.suffix/1476216522537.webp",
+        name: "Pancakes",
+        user: "@user",
+        rating: "⭐ 4.5",
+        date: "September 10, 2025",
+        recipe: "#",
+    },
+    {
+        id: 2,
+        url: "https://joyfoodsunshine.com/wp-content/uploads/2018/02/best-chocolate-chip-cookies-recipe-4.jpg",
+        name: "Cookies",
+        user: "@user",
+        rating: "⭐ 5.0",
+        date: "September 10, 2025",
+        recipe: "#",
+    },
+]
+
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <h1 className="text-3xl font-bold underline">
-            Welcome to RecipeTinder
-      </h1>
-      <a href="/about" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Learn More
-      </a>
-    </div>
+    <SwipeCards cardData={cardData} />
   );
 }
