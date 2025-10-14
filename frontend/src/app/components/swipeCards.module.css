@@ -91,6 +91,14 @@
   z-index: 0;
 }
 
+.icon-x:hover {
+  cursor: pointer;
+}
+
+.icon-x:active{
+  transform: translateY(-50%) scale(0.9);;
+}
+
 .icon-heart {
   position: absolute;
   top: 40%;
@@ -99,6 +107,14 @@
   height: 80px;
   right: -100px;
   z-index: 0;
+}
+
+.icon-heart:hover {
+  cursor: pointer;
+}
+
+.icon-heart:active{
+  transform: translateY(-50%) scale(0.9);;
 }
 
 @media (max-width: 500px) {
