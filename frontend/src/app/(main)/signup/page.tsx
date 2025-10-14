@@ -7,11 +7,13 @@ const Signup = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [firstname, setFirstname] = useState('')
+    const [lastname, setLastname] = useState('')
     const { signup, error, isLoading, success, clearError } = useSignup()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        await signup(username, email, password)
+        await signup(firstname, lastname, username, email, password)
     }
     
     return (
@@ -24,6 +26,38 @@ const Signup = () => {
                     </h2>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Firstname Field */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Enter your name"
+                                className="w-full px-4 py-3 border border-gray-800 hover:border-red-500 rounded-lg outline-none transition-all placeholder-gray-400 text-gray-800"
+                                onChange={(e) => {
+                                    setFirstname(e.target.value);
+                                    clearError();
+                                }}
+                                value={firstname}
+                            />
+                        </div>
+                        {/* Surname Field */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Surname
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Enter your surname"
+                                className="w-full px-4 py-3 border border-gray-800 hover:border-red-500 rounded-lg outline-none transition-all placeholder-gray-400 text-gray-800"
+                                onChange={(e) => {
+                                    setLastname(e.target.value);
+                                    clearError();
+                                }}
+                                value={lastname}
+                            />
+                        </div>
                         {/* Username Field */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
