@@ -1,6 +1,6 @@
 "use client"
 import {useState } from 'react'
-import { useAuthContext, userAuthContext } from './useAuthContext'
+import { useAuthContext } from './useAuthContext'
 
 export const useLogin = () => {
     const [error, setError] = useState(null)
@@ -31,11 +31,11 @@ export const useLogin = () => {
         //--------------------------------------------------------------------------------------
 
         // API Call to backend
-        const response = await fetch('/api/user/login', {
+        const response = await fetch('http://localhost:4000/api/user/login', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({email,password})
-        })
+        })  
 
         const json = await response.json()
 

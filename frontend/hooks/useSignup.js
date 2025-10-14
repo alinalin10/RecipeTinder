@@ -1,6 +1,6 @@
 "use client"
 import {useState } from 'react'
-import { useAuthContext, userAuthContext } from './useAuthContext'
+import { useAuthContext } from './useAuthContext'
 
 export const useSignup = () => {
     const [error, setError] = useState(null)
@@ -12,14 +12,15 @@ export const useSignup = () => {
         setError(null)
     }
 
-    const signup = async (username, email, password) => {
+    const signup = async (firstname, lastname, username, email, password) => {
+        console.log('Form values:', {firstname, lastname, username, email, password })
         setIsLoading(true)
         setError(null)
         setSuccess(null)
 
         //------- Requires Valid fields + emails (can be alloc to backend if u prefer) --------
-        if (!username || !email || !password) {
-            setError('All fields are required');
+        if (!firstname || !lastname || !username || !email || !password) {
+            setError('All fields are required actually');
             setIsLoading(false)
             return;
         }
@@ -33,10 +34,10 @@ export const useSignup = () => {
         //--------------------------------------------------------------------------------------
 
         // API Call to backend
-        const response = await fetch('/api/user/signup', {
+        const response = await fetch('http://localhost:4000/api/user/signup', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username, email,password})
+            body: JSON.stringify({firstname, lastname, username, email, password})
         })
 
         const json = await response.json()
