@@ -39,20 +39,8 @@ const userSchema = new Schema({
     password: { type: String, required: true, minLength: [6, 'Password must be at least 6 characters'] },
     createdAt: { type: Date, default: Date.now },
 
-
-    recipes: [{
-        recipeType: { 
-            type: String, 
-            required: true, 
-            enum: ['spoonacular', 'userMade'], // tells where recipe comes from (spoonacular API or user-created)
-            default: 'spoonacular'
-        },
-        recipeId: { 
-            type: mongoose.Schema.Types.Mixed, // ID Number for Spoonacular, ObjectId for user-made
-            required: true 
-        },
-        savedAt: { type: Date, default: Date.now }
-    }],
+    // Direct reference to saved recipes
+    savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'SavedRecipes' }],
 
     //embedded documents: pantry items and preferences below
     preferences: preferences,
@@ -135,5 +123,3 @@ userSchema.statics.login = async function(email, password)
 
 module.exports = model('User', userSchema);
 //'users' collection in mongoDB database
-
-
