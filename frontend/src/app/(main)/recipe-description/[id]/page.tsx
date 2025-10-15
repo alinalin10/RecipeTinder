@@ -1,11 +1,14 @@
 'use client';
+import { useParams } from 'next/navigation';
 import React, { useState, useContext } from 'react'
-import { useRecipesInfoContext } from '../../hooks/useRecipesContext';
+import { useRecipesInfoContext } from '../../../hooks/useRecipesContext';
 import styles from './recipe-description.module.css';
 
 const RecipeDescription = () => {
-    const { recipes } = useRecipesInfoContext()
-    const recipe = recipes ? recipes[1] : null;
+    const { id } = useParams(); // id comes from the [id] segment
+    const { recipes } = useRecipesInfoContext();
+
+    const recipe = recipes?.find((r: { id: string }) => r.id === id);
     if (!recipe) {
         return <p>Loading recipe...</p>;
     }

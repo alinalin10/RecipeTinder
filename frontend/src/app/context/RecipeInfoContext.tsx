@@ -1,9 +1,9 @@
 'use client';
-import { createContext, useState, useReducer, useEffect } from 'react'
+import { createContext, useState, useReducer, useEffect, ReactNode } from 'react'
 
-export const RecipesInfoContext = createContext()
+export const RecipesInfoContext = createContext(null)
 
-export const recipesReducer = (state, action) => {
+export const recipesReducer = (state: { recipes: any[] }, action: { type: string; payload: any }) => {
     switch (action.type) {
         case 'SET_RECIPES':
             return {
@@ -21,7 +21,7 @@ export const recipesReducer = (state, action) => {
 
 const exampleRecipes = [
     {
-        id: 1,
+        id: "1",
         image: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2016/10/11/1/FNK_Simple-Homemade-Pancakes_s4x3.jpg.rend.hgtvcom.616.462.suffix/1476216522537.webp",
         name: "Pancakes",
         user: "@user",
@@ -45,7 +45,7 @@ const exampleRecipes = [
         recipe: "#",
     },
     {
-        id: 2,
+        id: "2",
         image: "https://joyfoodsunshine.com/wp-content/uploads/2018/02/best-chocolate-chip-cookies-recipe-4.jpg",
         name: "Cookies",
         user: "@user",
@@ -70,7 +70,7 @@ const exampleRecipes = [
     },
 ];
 
-export const RecipesInfoContextProvider = ({ children }) => {
+export const RecipesInfoContextProvider = ( { children }: { children: ReactNode } ) => {
     const [state, dispatch] = useReducer(recipesReducer, {
         recipes: exampleRecipes
     })

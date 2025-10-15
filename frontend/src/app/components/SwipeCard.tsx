@@ -6,7 +6,7 @@ import styles from './swipeCards.module.css';
 
 
 // Returns the stack of cards and all their data
-const SwipeCards = ({ cardData }) => {
+const SwipeCards = ({ cardData }: { cardData: any[] }) => {
     const [cards, setCards] = useState(cardData);
     const removeTopCard = () => {
         setCards(prevCards => prevCards.slice(0, -1));

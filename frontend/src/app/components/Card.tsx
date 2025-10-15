@@ -2,7 +2,18 @@ import { motion, useMotionValue, useTransform } from 'framer-motion'
 import styles from './swipeCards.module.css';
 
 // Creates card component (id = place on stack, image = image, name = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
-const Card = ({ id, image, cards, setCards, name, user, rating, date, recipe, index }) => {
+const Card = ({ id, image, cards, setCards, name, user, rating, date, recipe, index }: {
+  id: number | string,
+  image: string,
+  cards: any[],
+  setCards: React.Dispatch<React.SetStateAction<any[]>>,
+  name: string,
+  user: string,
+  rating: string,
+  date: string,
+  recipe: string,
+  index: number
+}) => {
     // As card moves left and right it rotates sideways and also starts to disappear
     const x = useMotionValue(0);
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
