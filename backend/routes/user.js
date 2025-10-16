@@ -6,8 +6,6 @@ const {signupUser, loginUser} = require('../controllers/userController')
 //makes an instance of the express router
 const router = express.Router()
 
-module.exports = router
-
 //login route
 router.post('/login', loginUser)
 
