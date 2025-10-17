@@ -1,34 +1,49 @@
 require('dotenv').config()
+
+
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
+const userRoutes = require('./routes/user')
+
+/*debug for .env secret JWT signature not being held secret
+
+console.log('=== Environment Debug ===');
+console.log('SECRET loaded:', !!process.env.SECRET);
+console.log('SECRET value:', process.env.SECRET);
+console.log('=========================');
+*/
 
 const app = express();
 
-const userRecipeRoutes = require("./routes/User-Recipe-Routes")
+const PORT = process.env.PORT;
 
-// middleware
-app.use(express.json())
-
-app.use((req, res, next)=> {
+// Middleware
+app.use(cors())             // Allow cross-origin requests
+app.use(express.json())     // Parse JSON request bodies
+app.use((req, res, next) => {
     console.log(req.path, req.method)
     next()
 })
 
+//routes
+app.use('/api/user', userRoutes)
+
+// Basic test route
 app.get('/', (req, res) => {
-    res.json({msg: 'Welcome to RecipeTinder API'})
+    res.json({ msg: 'Welcome to RecipeTinder API' })
 })
 
-// routes
-app.use('/api/user-recipes', userRecipeRoutes)
-
-// connect to db
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        // listen for reqs
-        app.listen(process.env.PORT, () => {
-            console.log(`Server is running on port ${process.env.PORT}`)
-        })
+// Connect to MongoDB and start server
+mongoose.connect(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+})
+.then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`)
     })
-    .catch((error) => {
-        console.log(error)
-    })
+})
+.catch((error) => {
+    console.log('MongoDB connection error:', error)
+})

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import { RecipesInfoContextProvider } from './context/RecipeInfoContext';
+import Providers from './Providers'
 
 
 const geistSans = Geist({
@@ -31,8 +32,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <RecipesInfoContextProvider>
-          <NavBar />
-          {children}
+          <Providers>
+            <NavBar />
+            {children}
+          </Providers>
         </RecipesInfoContextProvider>
       </body>
     </html>
