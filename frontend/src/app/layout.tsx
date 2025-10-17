@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar";
+import { RecipesInfoContextProvider } from './context/RecipeInfoContext';
 import Providers from './Providers'
 
 
@@ -30,11 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-
-        <Providers>
-          <NavBar />
-          {children}
-        </Providers>
+        <RecipesInfoContextProvider>
+          <Providers>
+            <NavBar />
+            {children}
+          </Providers>
+        </RecipesInfoContextProvider>
       </body>
     </html>
   );
