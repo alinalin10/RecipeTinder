@@ -1,5 +1,6 @@
 import Link from "next/link";
 import "./NavBar.css";
+import Image from "next/image";
 
 export default function NavBar() {
   return (
@@ -16,14 +17,16 @@ export default function NavBar() {
     <div className="nav-actions"></div>
       <div className="links">
         <Link href="/about">About</Link>
-        <Link href="/recipes">Share Recipes</Link>
+        <Link href="/make-recipe">Share Recipes</Link>
         <Link href="/recipes">My Recipes</Link>
         <Link href="/login">Login</Link>
       </div>
 
      {/* Sign up / User */}
        <Link href="/signup" className="signup-btn">Sign Up</Link>
-       <img src="/UserImage.png" alt="User Profile" className="profile-icon" />
+       <Link href="/user-pref">
+        <img src="/UserImage.png" alt="User Profile" className="profile-icon" />
+       </Link>
      </div>
     
    </nav>
