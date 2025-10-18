@@ -1,6 +1,8 @@
 'use client';
 import React from 'react'
-import { useState, useRef } from 'react'
+import { useState, useRef, FormEvent } from 'react'
+import { useMakeRecipe } from '../../../hooks/useMakeRecipe'
+
 const Makerecipe = () => {
   const  [title, setTitle] = useState('')
   const  [course, setCourse] = useState('')
@@ -14,6 +16,8 @@ const Makerecipe = () => {
   const  [ingredients, setIngredients] = useState<string[]>([])
   const  [newIngredient, setNewIngredient] = useState("")
   const  [image, setImage] = useState<string | null>(null)
+
+  const { makerecipe, error, isLoading, success, clearError } = useMakeRecipe()
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,7 +37,7 @@ const Makerecipe = () => {
   function handleRemoveIngredient(i: number) {
     setIngredients((prev) => prev.filter((_, idx) => idx !== i))
   }
-   function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const payload = {
       title,
@@ -51,13 +55,45 @@ const Makerecipe = () => {
         .filter(Boolean),
       image,
     };
+
+    await makerecipe(
+      title,
+      course,
+      servings,
+      description,
+      prepTime,
+      cookTime,
+      calories,
+      difficulty,
+      steps
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      ingredients,
+      image
+    );
+
     alert("Recipe submitted!\n\n" + JSON.stringify(payload, null, 2));
+
+    // Reset form fields here:
+    setTitle("");
+    setCourse("");
+    setServings("");
+    setDescription("");
+    setPrepTime(0);
+    setCookTime(0);
+    setCalories("");
+    setDifficulty("");
+    setSteps("");
+    setIngredients([]);
+    setNewIngredient("");
+    setImage(null);
   }
   return (
     <div className='min-h-screen bg-white text-neutral-900'>
       <div className='mx-auto max-w-6xl px-4 py-10'>
         <h1 className='text-4xl font-extrabold tracking-tight'>Share your Recipe</h1>
-        <form className='mt-8 grid grid-cols-1 gap-8 md:grid-cols-[1fr_360px]'>
+        <form onSubmit={handleSubmit} className='mt-8 grid grid-cols-1 gap-8 md:grid-cols-[1fr_360px]'>
           {/* left */}
           <div className='space-y-6'>
             <div>
@@ -164,7 +200,7 @@ const Makerecipe = () => {
               </div>
             </div>
           )}
-          <input type="file" ref={fileInputRef} accept='image/*' className='hidden' onChange={(e) => (e.target.files)}/>
+          <input type="file" ref={fileInputRef} accept='image/*' className='hidden' onChange={(e) => onDropFile(e.target.files)}/>
             </div>
           </div>
         </form>

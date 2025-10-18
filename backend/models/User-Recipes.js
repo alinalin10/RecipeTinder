@@ -5,9 +5,16 @@ const model = mongoose.model;
 
 const userRecipes = new Schema({
     title: { type: String, required: true },
+    course: { type: String, required: true },
+    servings: { type: String, required: true },
+    description: { type: String, required: true },
+    prepTime: { type: Number, required: true },
+    cookTime: { type: Number, required: true },
+    calories: { type: String, required: true },
+    difficulty: { type: String, required: true },
+    steps: { type: [String], required: true },
     image: { type: String },
     ingredients: { type: [String], required: true },
-    instructions: { type: String, required: true },
     time: { type: Number, },
 });
 

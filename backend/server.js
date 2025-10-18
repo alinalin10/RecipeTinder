@@ -5,6 +5,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const userRoutes = require('./routes/user')
+const userRecipeRoutes = require('./routes/User-Recipe-Routes');
 
 /*debug for .env secret JWT signature not being held secret
 
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 
 //routes
 app.use('/api/user', userRoutes)
+app.use('/api/userrecipes', userRecipeRoutes);
 
 // Basic test route
 app.get('/', (req, res) => {
