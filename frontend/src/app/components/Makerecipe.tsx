@@ -200,7 +200,7 @@ const Makerecipe = () => {
               </div>
             </div>
           )}
-          <input type="file" ref={fileInputRef} accept='image/*' className='hidden' onChange={(e) => (e.target.files)}/>
+          <input type="file" ref={fileInputRef} accept='image/*' className='hidden' onChange={(e) => onDropFile(e.target.files)}/>
             </div>
           </div>
         </form>
