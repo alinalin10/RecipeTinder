@@ -5,6 +5,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const userRoutes = require('./routes/user')
+const userRecipeRoutes = require('./routes/User-Recipe-Routes');
 
 /*debug for .env secret JWT signature not being held secret
 
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 
 //routes
 app.use('/api/user', userRoutes)
+app.use('/api/userrecipes', userRecipeRoutes);
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -36,8 +38,8 @@ app.get('/', (req, res) => {
 
 // Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
 })
 .then(() => {
     app.listen(PORT, () => {
