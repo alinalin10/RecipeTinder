@@ -1,10 +1,14 @@
 "use client"
 import { useAuthContext } from "./useAuthContext"
 
-export const useLogout = () => {
+interface UseLogoutReturn {
+    logout: () => void;
+}
+
+export const useLogout = (): UseLogoutReturn => {
     const { dispatch } = useAuthContext()
 
-    const logout = () => {
+    const logout = (): void => {
         if (typeof window !== 'undefined') localStorage.removeItem('user')
         dispatch({ type: 'LOGOUT' })
     }
