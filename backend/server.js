@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user')
 const userRecipeRoutes = require('./routes/User-Recipe-Routes');
 const swipeRoutes = require('./routes/swipe');
+const recipeRoutes = require('./routes/recipes')
 
 /*debug for .env secret JWT signature not being held secret
 
@@ -34,7 +35,8 @@ app.use((req, res, next) => {
 //routes
 app.use('/api/user', userRoutes)
 app.use('/api/userrecipes', userRecipeRoutes);
-app.use('/api/recipes', swipeRoutes);
+app.use('/api/swipe', swipeRoutes);
+app.use('/api/recipes', recipeRoutes)
 
 // Basic test route
 app.get('/', (req, res) => {

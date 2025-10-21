@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent } from 'react'
-import { useSignup } from '../../../../hooks/useSignup'
+import { useSignup } from '../../../hooks/useSignup'
 import Link from "next/link";
 
 const Signup = () => {
