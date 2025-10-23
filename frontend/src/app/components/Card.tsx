@@ -1,19 +1,35 @@
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import styles from './swipeCards.module.css';
 
 // Creates card component (id = place on stack, image = image, name = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
-const Card = ({ id, image, cards, setCards, name, user, rating, date, recipe, index }: {
+const Card = ({
+  id,
+  image,
+  cards,
+  setCards,
+  name,
+  title,
+  user,
+  rating,
+  difficulty,
+  date,
+  recipe,
+  index
+}: {
   id: number | string,
   image: string,
   cards: any[],
   setCards: React.Dispatch<React.SetStateAction<any[]>>,
-  name: string,
-  user: string,
-  rating: string,
-  date: string,
-  recipe: string,
+  name?: string,
+  title?: string,
+  user?: string,
+  rating?: string,
+  difficulty?: string,
+  date?: string,
+  recipe?: string,
   index: number
 }) => {
+
     // As card moves left and right it rotates sideways and also starts to disappear
     const x = useMotionValue(0);
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
@@ -21,9 +37,23 @@ const Card = ({ id, image, cards, setCards, name, user, rating, date, recipe, in
 
     // Front card disappears when dragged and let go
     const handleDragEnd = () => {
-        if (Math.abs(x.get()) > 150) {
-            // Get rid of front card when dragged
-            setCards(pv => pv.filter(v => v.id !== id))
+        const currentX = x.get();
+        if (Math.abs(currentX) > 150) {
+            const direction = currentX > 0 ? 1 : -1;
+
+            // Animate card offscreen in swipe direction
+            animate(x, direction * 600, {
+                type: 'spring',
+                stiffness: 200,
+                damping: 25,
+                onComplete: () => {
+                    // Remove the card *after* it finishes animating out
+                    setCards(prev => prev.filter(v => (v.id || v._id) !== id));
+                }
+            });
+        } else {
+            // If not swiped far enough, reset position
+            animate(x, 0, { type: 'spring', stiffness: 300, damping: 25 });
         }
     }
 
@@ -40,14 +70,14 @@ const Card = ({ id, image, cards, setCards, name, user, rating, date, recipe, in
     >
         <img src={image} alt={name} className={styles['card-image']}/>
         <div className={styles['card-content']}>
-            <h1 className={styles['recipe-name']}>{name}</h1>
+            <h1 className={styles['recipe-name']}>{name || title}</h1>
             <div className={styles['same-row']}>
-                <h2>{user}</h2>
-                <h2>{rating}</h2>
+            <h2>{user || "User"}</h2>
+            <h2>{rating || difficulty || "⭐ —"}</h2>
             </div>
             <div className={styles['same-row']}>
-                <p>{date}</p>
-                <a href={recipe} className={styles['recipe-link']}>View Recipe</a>
+            <p>{date || ""}</p>
+            <a href={recipe || "#"} className={styles['recipe-link']}>View Recipe</a>
             </div>
         </div>
     </motion.div>

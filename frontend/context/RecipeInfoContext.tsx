@@ -77,18 +77,26 @@ export const RecipesInfoContextProvider = ( { children }: { children: ReactNode 
 
     // for when the backend database is setup - can changle recipes: exampleRecipes to recipes: null as well in the line above and delete example data
 
-    /*useEffect(() => {
+    useEffect(() => {
         const fetchRecipes = async () => {
-            const response = await fetch('/api/recipes');
-            const json = await response.json();
-
-            if (response.ok) {
+            try {
+                // if this is deployed, this will need to change
+                const response = await fetch('http://localhost:4000/api/userrecipes');
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error("Failed to fetch recipes:", response.status, text);
+                    return;
+                }
+                const json = await response.json();
+                console.log('Fetched recipes:', json);
                 dispatch({ type: 'SET_RECIPES', payload: json });
+            } catch (error) {
+                console.error("Error fetching recipe:", error);
             }
         };
 
         fetchRecipes();
-    }, []);*/
+    }, []);
 
 
     return (
