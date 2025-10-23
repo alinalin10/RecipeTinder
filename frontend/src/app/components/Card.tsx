@@ -69,7 +69,7 @@ const Card = ({
         <div className={styles['card-content']}>
             <h1 className={styles['recipe-name']}>{name || title}</h1>
             <div className={styles['same-row']}>
-            <h2>{user || "@user"}</h2>
+            <h2>{"@" + user || "@user"}</h2>
             <h2>{rating || "⭐ 5.0"}</h2>
             </div>
             <div className={styles['same-row']}>

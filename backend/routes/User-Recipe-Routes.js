@@ -40,6 +40,7 @@ router.post('/', async (req, res) => {
   try {
     const {
       title,
+      user,
       course,
       servings,
       description,
@@ -55,6 +56,7 @@ router.post('/', async (req, res) => {
 
     const recipe = await UserRecipes.create({
       title,
+      user,
       course,
       servings,
       description,
