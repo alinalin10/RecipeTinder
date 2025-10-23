@@ -72,7 +72,7 @@ const exampleRecipes = [
 
 export const RecipesInfoContextProvider = ( { children }: { children: ReactNode } ) => {
     const [state, dispatch] = useReducer(recipesReducer, {
-        recipes: exampleRecipes
+        recipes: []
     })
 
     // for when the backend database is setup - can changle recipes: exampleRecipes to recipes: null as well in the line above and delete example data
@@ -88,7 +88,6 @@ export const RecipesInfoContextProvider = ( { children }: { children: ReactNode 
                     return;
                 }
                 const json = await response.json();
-                console.log('Fetched recipes:', json);
                 dispatch({ type: 'SET_RECIPES', payload: json });
             } catch (error) {
                 console.error("Error fetching recipe:", error);

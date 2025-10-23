@@ -41,18 +41,15 @@ const Card = ({
         if (Math.abs(currentX) > 150) {
             const direction = currentX > 0 ? 1 : -1;
 
-            // Animate card offscreen in swipe direction
             animate(x, direction * 600, {
                 type: 'spring',
                 stiffness: 200,
                 damping: 25,
                 onComplete: () => {
-                    // Remove the card *after* it finishes animating out
                     setCards(prev => prev.filter(v => (v.id || v._id) !== id));
                 }
             });
         } else {
-            // If not swiped far enough, reset position
             animate(x, 0, { type: 'spring', stiffness: 300, damping: 25 });
         }
     }
@@ -72,12 +69,12 @@ const Card = ({
         <div className={styles['card-content']}>
             <h1 className={styles['recipe-name']}>{name || title}</h1>
             <div className={styles['same-row']}>
-            <h2>{user || "User"}</h2>
-            <h2>{rating || difficulty || "⭐ —"}</h2>
+            <h2>{user || "@user"}</h2>
+            <h2>{rating || "⭐ 5.0"}</h2>
             </div>
             <div className={styles['same-row']}>
-            <p>{date || ""}</p>
-            <a href={recipe || "#"} className={styles['recipe-link']}>View Recipe</a>
+            <p>{date || "October 23, 2025"}</p>
+            <a href={recipe || "/recipe-description/" + id} className={styles['recipe-link']}>View Recipe</a>
             </div>
         </div>
     </motion.div>

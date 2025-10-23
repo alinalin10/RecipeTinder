@@ -5,9 +5,9 @@ const model = mongoose.model;
 
 const userRecipes = new Schema({
     title: { type: String, required: true },
-    course: { type: String, required: true },
-    servings: { type: String, required: true },
-    description: { type: String, required: true },
+    course: { type: String },
+    servings: { type: String },
+    description: { type: String },
     prepTime: { type: Number, required: true },
     cookTime: { type: Number, required: true },
     calories: { type: String, required: true },
@@ -16,6 +16,15 @@ const userRecipes = new Schema({
     image: { type: String },
     ingredients: { type: [String], required: true },
     time: { type: Number, },
+});
+
+userRecipes.set('toJSON', {
+  virtuals: true,          // include any virtual fields you define
+  versionKey: false,       // remove the "__v" field (used by MongoDB for versioning)
+  transform: function (doc, ret) {
+    ret.id = ret._id;      // copy the _id value into a new field "id"
+    delete ret._id;        // remove the original _id so frontend doesn’t see it
+  }
 });
 
 module.exports = model('UserRecipes', userRecipes);
