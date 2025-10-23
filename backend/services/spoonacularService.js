@@ -6,6 +6,7 @@ const BASE_URL = 'https://api.spoonacular.com/recipes';
 // Get random recipes
 const getRandomRecipes = async (number = 5, tags = '') => {
     try {
+        console.log('Fetching random recipes with API key:', SPOONACULAR_API_KEY);
         const response = await axios.get(`${BASE_URL}/random`, {
             params: {
                 apiKey: SPOONACULAR_API_KEY,
@@ -14,9 +15,10 @@ const getRandomRecipes = async (number = 5, tags = '') => {
                 includeNutrition: true  // Include nutrition information (calories, etc.)
             }
         });
+        console.log('Successfully fetched recipes:', response.data.recipes.length);
         return response.data.recipes;
     } catch (error) {
-        console.error('Error fetching random recipes:', error.message);
+        console.error('Error fetching random recipes:',  error.response?.data || error.message);
         throw new Error('Failed to fetch random recipes from Spoonacular');
     }
 };
