@@ -12,6 +12,7 @@ const Makerecipe = () => {
   const  [prepTime, setPrepTime] = useState(0)
   const  [cookTime, setCookTime] = useState(0)
   const  [calories, setCalories] = useState("")
+  const  [cuisine, setCuisine] = useState("")
   const  [difficulty, setDifficulty] = useState('')
   const  [steps, setSteps] = useState('')
   const  [ingredients, setIngredients] = useState<string[]>([])
@@ -56,6 +57,7 @@ const Makerecipe = () => {
       prepTime,
       cookTime,
       calories,
+      cuisine,
       difficulty,
       ingredients,
       steps: steps
@@ -74,6 +76,7 @@ const Makerecipe = () => {
       prepTime,
       cookTime,
       calories,
+      cuisine,
       difficulty,
       steps
         .split("\n")

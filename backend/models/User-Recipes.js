@@ -12,6 +12,7 @@ const userRecipes = new Schema({
     prepTime: { type: Number },
     cookTime: { type: Number },
     calories: { type: String },
+    cuisine: { type: String },
     difficulty: { type: String },
     steps: { type: [String] },
     image: { type: String },
