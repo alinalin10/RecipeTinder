@@ -4,6 +4,7 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user')
 const userRecipeRoutes = require('./routes/User-Recipe-Routes');
 
@@ -21,7 +22,9 @@ const PORT = process.env.PORT;
 
 // Middleware
 app.use(cors())             // Allow cross-origin requests
-app.use(express.json())     // Parse JSON request bodies
+app.use(express.json({ limit: '10mb' }))     // Parse JSON request bodies
+app.use(bodyParser.json({ limit: '10mb' })); 
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use((req, res, next) => {
     console.log(req.path, req.method)
     next()
