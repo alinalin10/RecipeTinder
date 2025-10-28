@@ -103,10 +103,7 @@ module.exports = {
     getRecipeById,
     getRecipesByIngredients,
     getPersonalizedRecipes,
-    getRecipesFromPantry,
-    saveRecipe,
-    unsaveRecipe,
-    getUserSavedRecipes
+    getRecipesFromPantry
 };
 
 /* // Get random recipes

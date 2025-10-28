@@ -7,10 +7,7 @@ const {
     getRecipeById,
     getRecipesByIngredients,
     getPersonalizedRecipes,
-    getRecipesFromPantry,
-    saveRecipe,
-    unsaveRecipe,
-    getUserSavedRecipes
+    getRecipesFromPantry
 } = require('../controllers/recipeController');
 
 // API key validation to all routes that use Spoonacular
@@ -27,17 +24,6 @@ router.get('/users/:userId/personalized', getPersonalizedRecipes);
 
 // GET /api/recipes/users/:userId/from-pantry
 router.get('/users/:userId/from-pantry', getRecipesFromPantry);
-
-// GET /api/recipes/users/:userId/saved
-router.get('/users/:userId/saved', getUserSavedRecipes);
-
-// POST /api/recipes/users/:userId/save
-// Body: { recipeId: 716429, recipeType: "spoonacular" }
-router.post('/users/:userId/save', saveRecipe);
-
-// DELETE /api/recipes/users/:userId/unsave
-// Body: { recipeId: 716429, recipeType: "spoonacular" }
-router.delete('/users/:userId/unsave', unsaveRecipe);
 
 module.exports = router;
 
