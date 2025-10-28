@@ -1,4 +1,4 @@
-import { RecipesInfoContext } from '../context/RecipeInfoContext'
+import { RecipesInfoContext } from '../../context/RecipeInfoContext'
 import { useContext } from 'react'
 
 export const useRecipesInfoContext = () => {
