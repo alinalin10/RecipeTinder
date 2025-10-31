@@ -13,11 +13,12 @@ const MakeRecipe = () => {
   const  [cookTime, setCookTime] = useState(0)
   const  [calories, setCalories] = useState("")
   const  [cuisine, setCuisine] = useState("")
-  const  [difficulty, setDifficulty] = useState('')
+  const  [difficulty, setDifficulty] = useState(0)
   const  [steps, setSteps] = useState<string[]>([])
   const  [ingredients, setIngredients] = useState<string[]>([])
   const  [newIngredient, setNewIngredient] = useState("")
   const  [newStep, setNewStep] = useState("")
+  const [date, setDate] = useState(new Date());
   const  [image, setImage] = useState<string | null>(null)
 
   const { makerecipe, error, isLoading, success, clearError } = useMakeRecipe()
@@ -57,6 +58,8 @@ const MakeRecipe = () => {
       alert("You must be logged in to make a recipe.");
       return;
     }
+
+    const time = date.toLocaleString('default', { month: 'long' }) + " " + date.getDay() + ", " + date.getFullYear();
     
     const payload = {
       title,
@@ -71,6 +74,7 @@ const MakeRecipe = () => {
       difficulty,
       ingredients,
       steps,
+      time,
       image,
     };
 
@@ -87,6 +91,7 @@ const MakeRecipe = () => {
       difficulty,
       steps,
       ingredients,
+      time,
       image
     );
 
@@ -100,7 +105,7 @@ const MakeRecipe = () => {
     setPrepTime(0);
     setCookTime(0);
     setCalories("");
-    setDifficulty("");
+    setDifficulty(0);
     setSteps([]);
     setNewStep("");
     setIngredients([]);
@@ -133,7 +138,7 @@ const MakeRecipe = () => {
                 <label className='mb-2 block text-sm font-semibold'>Description</label>
                 <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Delicious and healthy meal option when you are short on time' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
               </div>
-              <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+              <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
                 <div>
                   <label className='mb-2 block text-sm font-semibold'>Prep Time</label>
                   <div className='flex items-center gap-2'>
@@ -156,6 +161,16 @@ const MakeRecipe = () => {
                     <span className='text-sm text-neutral-500'>minutes</span>
                   </div>
                 </div>
+                <div>
+                  <label className='mb-2 block text-sm font-semibold'>Difficulty</label>
+                  <div className='flex items-center gap-2'>
+                    <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
+                        <button type='button' onClick={()=> setDifficulty(Math.min(5, Math.max(1, difficulty - 1)))} className='px-3 py-2 text-sm'>-</button>
+                        <input type="number" value={difficulty} placeholder='' onChange={(e) => setDifficulty(Number(e.target.value))} className='w-16 bg-white p-2 text-center text-sm'/>
+                        <button type='button' onClick={()=> setDifficulty(Math.min(5, Math.max(1, difficulty + 1)))} className='px-3 py-2 text-sm'>+</button>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                 <div>
@@ -163,8 +178,8 @@ const MakeRecipe = () => {
                   <input type="text" value={calories} onChange={(e)=> setCalories(e.target.value)} placeholder='350 kcal' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
                 </div>
                 <div>
-                  <label>Difficulty</label>
-                  <input type="text" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder='Easy/Medium/Hard' className='w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+                  <label className='block mb-2 text-sm font-semibold'>Cuisine</label>
+                  <input type="text" value={cuisine} onChange={(e) => setCuisine(e.target.value)} placeholder='Italian/Mexican/Indian' className='w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
                 </div>
               </div>
               <div>
