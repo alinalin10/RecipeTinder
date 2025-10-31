@@ -4,7 +4,7 @@ import { useState, useRef, FormEvent, useContext } from 'react'
 import { useMakeRecipe } from '../../../hooks/useMakeRecipe'
 import { AuthContext } from '../../../context/AuthContext'
 
-const Makerecipe = () => {
+const MakeRecipe = () => {
   const  [title, setTitle] = useState('')
   const  [course, setCourse] = useState('')
   const  [servings, setServings] = useState('')
@@ -13,10 +13,12 @@ const Makerecipe = () => {
   const  [cookTime, setCookTime] = useState(0)
   const  [calories, setCalories] = useState("")
   const  [cuisine, setCuisine] = useState("")
-  const  [difficulty, setDifficulty] = useState('')
-  const  [steps, setSteps] = useState('')
+  const  [difficulty, setDifficulty] = useState(0)
+  const  [steps, setSteps] = useState<string[]>([])
   const  [ingredients, setIngredients] = useState<string[]>([])
   const  [newIngredient, setNewIngredient] = useState("")
+  const  [newStep, setNewStep] = useState("")
+  const [date, setDate] = useState(new Date());
   const  [image, setImage] = useState<string | null>(null)
 
   const { makerecipe, error, isLoading, success, clearError } = useMakeRecipe()
@@ -40,6 +42,15 @@ const Makerecipe = () => {
   function handleRemoveIngredient(i: number) {
     setIngredients((prev) => prev.filter((_, idx) => idx !== i))
   }
+  function handleAddStep(){
+    const trimmedS = newStep.trim();
+    if (!trimmedS) return;
+    setSteps((prev) => [...prev, trimmedS])
+    setNewStep("")
+  }
+  function handleRemoveStep(j: number) {
+    setSteps((prev) => prev.filter((_, idx) => idx !== j))
+  }
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -47,6 +58,8 @@ const Makerecipe = () => {
       alert("You must be logged in to make a recipe.");
       return;
     }
+
+    const time = date.toLocaleString('default', { month: 'long' }) + " " + date.getDate() + ", " + date.getFullYear();
     
     const payload = {
       title,
@@ -60,10 +73,8 @@ const Makerecipe = () => {
       cuisine,
       difficulty,
       ingredients,
-      steps: steps
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      steps,
+      time,
       image,
     };
 
@@ -78,11 +89,9 @@ const Makerecipe = () => {
       calories,
       cuisine,
       difficulty,
-      steps
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      steps,
       ingredients,
+      time,
       image
     );
 
@@ -96,8 +105,9 @@ const Makerecipe = () => {
     setPrepTime(0);
     setCookTime(0);
     setCalories("");
-    setDifficulty("");
-    setSteps("");
+    setDifficulty(0);
+    setSteps([]);
+    setNewStep("");
     setIngredients([]);
     setNewIngredient("");
     setImage(null);
@@ -128,12 +138,12 @@ const Makerecipe = () => {
                 <label className='mb-2 block text-sm font-semibold'>Description</label>
                 <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Delicious and healthy meal option when you are short on time' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
               </div>
-              <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+              <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
                 <div>
                   <label className='mb-2 block text-sm font-semibold'>Prep Time</label>
                   <div className='flex items-center gap-2'>
                     <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
-                        <button type='button' onClick={()=> setPrepTime(prepTime - 1)} className='px-3 py-2 text-sm'>-</button>
+                        <button type='button' onClick={()=> setPrepTime(Math.max(0, prepTime - 1))} className='px-3 py-2 text-sm'>-</button>
                         <input type="number" value={prepTime} placeholder='' onChange={(e) => setPrepTime(Number(e.target.value))} className='w-16 bg-white p-2 text-center text-sm'/>
                         <button type='button' onClick={()=> setPrepTime(prepTime + 1)} className='px-3 py-2 text-sm'>+</button>
                     </div>
@@ -144,11 +154,21 @@ const Makerecipe = () => {
                   <label className='mb-2 block text-sm font-semibold'>Cooking Time</label>
                   <div className='flex items-center gap-2'>
                     <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
-                        <button type='button' className='px-3 py-2 text-sm' onClick={()=> setCookTime(cookTime - 1)}>-</button>
+                        <button type='button' className='px-3 py-2 text-sm' onClick={()=> setCookTime(Math.max(0, cookTime - 1))}>-</button>
                         <input type="number" value={cookTime} placeholder='' onChange={(e) => setCookTime(Number(e.target.value))} className='w-16  bg-white p-2 text-center text-sm'/>
                         <button type="button" onClick={()=> setCookTime(cookTime + 1)} className='px-3 py-2 text-sm'>+</button>
                     </div>
                     <span className='text-sm text-neutral-500'>minutes</span>
+                  </div>
+                </div>
+                <div>
+                  <label className='mb-2 block text-sm font-semibold'>Difficulty</label>
+                  <div className='flex items-center gap-2'>
+                    <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
+                        <button type='button' onClick={()=> setDifficulty(Math.min(5, Math.max(1, difficulty - 1)))} className='px-3 py-2 text-sm'>-</button>
+                        <input type="number" value={difficulty} placeholder='' onChange={(e) => setDifficulty(Number(e.target.value))} className='w-16 bg-white p-2 text-center text-sm'/>
+                        <button type='button' onClick={()=> setDifficulty(Math.min(5, Math.max(1, difficulty + 1)))} className='px-3 py-2 text-sm'>+</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -158,8 +178,8 @@ const Makerecipe = () => {
                   <input type="text" value={calories} onChange={(e)=> setCalories(e.target.value)} placeholder='350 kcal' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
                 </div>
                 <div>
-                  <label>Difficulty</label>
-                  <input type="text" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder='Easy/Medium/Hard' className='w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+                  <label className='block mb-2 text-sm font-semibold'>Cuisine</label>
+                  <input type="text" value={cuisine} onChange={(e) => setCuisine(e.target.value)} placeholder='Italian/Mexican/Indian' className='w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
                 </div>
               </div>
               <div>
@@ -170,7 +190,7 @@ const Makerecipe = () => {
                     key = {i}
                     className='flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm shadow-sm'
                     >
-                    <span className='truncate'>• {ing}</span>
+                    <span className='truncate'>{ing}</span>
                     <button type="button" onClick={() => handleRemoveIngredient(i)} className='ml-3 rounded-lg px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-100'>Remove</button>
                     </div>
                   ))}
@@ -184,7 +204,23 @@ const Makerecipe = () => {
               </div>
               <div>
                 <label className='mb-2 block text-sm font-semibold'>Instructions</label>
-                <textarea className='h-80 w-full resize-none rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm leading-6 shadow-sm outine-none focus:ring-2 focus:ring-gray-400' placeholder='Step by Step (One per line)' value={steps} onChange={(e) => setSteps(e.target.value)}/>
+                  <div className='space-y-2'>
+                    {steps.map((inst,j) =>(
+                      <div 
+                      key = {j}
+                      className='flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm shadow-sm'
+                      >
+                      <span className='truncate'>{inst}</span>
+                      <button type="button" onClick={() => handleRemoveStep(j)} className='ml-3 rounded-lg px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-100'>Remove</button>
+                      </div>
+                    ))}
+                    <div className='flex-gap-2'>
+                      <input type="text" className='w-full flex-1 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-rose-400' placeholder='Add Instruction' value={newStep} onChange={(e) => setNewStep(e.target.value)}/>
+                      <button type="button" onClick={handleAddStep} className='mt-3 items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition bg-red-400 hover:border-rose-500 hover:cursor-pointer'>
+                        <span className='text-lg'>+</span> Add Instruction
+                      </button>
+                    </div>
+                  </div>
               </div>
               <div className='pt-2'>
                 <button type="submit" className='w-full rounded-xl bg-rose-400 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500'>Post</button>
@@ -192,7 +228,7 @@ const Makerecipe = () => {
             </div>
             <div>
               <div
-              className='sticky top-6 flex h-80 w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-100/70 text-center'
+              className='sticky top-6 flex h-80 w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-neutral-300 bg-[#d9d9d9] text-center'
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
@@ -203,14 +239,11 @@ const Makerecipe = () => {
               {image ? (
                 <img src={image} alt="recipe" className='h-full w-full rounded-2xl object-cover'/>
               ):(<div>
-                <div className='px-6'>
+                <div>
                   <div>
-                    <svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 24 24" fill="currentColor" className="h-full w-full">
-                      <path d="M19 3H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V5a2 2 0 00-2-2z" />
-                    </svg>
+                    <img src='/UploadImage.png' className="h-80">
+                    </img>
                   </div>
-                  <p className='text-sm font-semibold'>Drop or Upload Image</p>
-                  <p className='mt-1 text-xs text-neutral-500'>Up to 5MB</p>
                 </div>
               </div>
             )}
@@ -224,4 +257,4 @@ const Makerecipe = () => {
   )
 }
 
-export default Makerecipe
+export default MakeRecipe

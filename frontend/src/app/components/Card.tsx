@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import styles from './swipeCards.module.css';
 
-// Creates card component (id = place on stack, image = image, name = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
+// Creates card component (id = place on stack, image = image, name = food, user = uploader, rating = rating, time = date uploaded, recipe = link to recipe, index = used to organize stack)
 const Card = ({
   id,
   image,
@@ -12,7 +12,7 @@ const Card = ({
   user,
   rating,
   difficulty,
-  date,
+  time,
   recipe,
   index
 }: {
@@ -25,7 +25,7 @@ const Card = ({
   user?: string,
   rating?: string,
   difficulty?: string,
-  date?: string,
+  time?: string,
   recipe?: string,
   index: number
 }) => {
@@ -73,7 +73,7 @@ const Card = ({
             <h2>{rating || "⭐ 5.0"}</h2>
             </div>
             <div className={styles['same-row']}>
-            <p>{date || "October 23, 2025"}</p>
+            <p>{time}</p>
             <a href={recipe || "/recipe-description/" + id} className={styles['recipe-link']}>View Recipe</a>
             </div>
         </div>

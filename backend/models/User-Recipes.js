@@ -5,7 +5,7 @@ const model = mongoose.model;
 
 const userRecipes = new Schema({
     title: { type: String, required: true },
-    user: { type: String },
+    user: { type: String, required: true },
     course: { type: String, required: true },
     servings: { type: String, required: true },
     description: { type: String },
@@ -17,7 +17,7 @@ const userRecipes = new Schema({
     steps: { type: [String] },
     image: { type: String },
     ingredients: { type: [String] },
-    time: { type: Number, },
+    time: { type: String, },
 });
 
 userRecipes.set('toJSON', {

@@ -12,8 +12,8 @@ export const useMakeRecipe = () => {
         setError(null)
     }
 
-    const makerecipe = async (title, user, course, servings, description, prepTime, cookTime, calories, cuisine, difficulty, steps, ingredients, image) => {
-        console.log('Form values:', { title, user, course, servings, description, prepTime, cookTime, calories, cuisine, difficulty, steps, ingredients, image })
+    const makerecipe = async (title, user, course, servings, description, prepTime, cookTime, calories, cuisine, difficulty, steps, ingredients, time, image) => {
+        console.log('Form values:', { title, user, course, servings, description, prepTime, cookTime, calories, cuisine, difficulty, steps, ingredients, time, image })
         setIsLoading(true)
         setError(null)
         setSuccess(null)
@@ -22,7 +22,7 @@ export const useMakeRecipe = () => {
         const response = await fetch('http://localhost:4000/api/userrecipes', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({title, user, course, servings, description, prepTime, cookTime, calories, cuisine, difficulty, steps, ingredients, image})
+            body: JSON.stringify({title, user, course, servings, description, prepTime, cookTime, calories, cuisine, difficulty, steps, ingredients, time, image})
         })
 
         const json = await response.json()
