@@ -59,7 +59,7 @@ const MakeRecipe = () => {
       return;
     }
 
-    const time = date.toLocaleString('default', { month: 'long' }) + " " + date.getDay() + ", " + date.getFullYear();
+    const time = date.toLocaleString('default', { month: 'long' }) + " " + date.getDate() + ", " + date.getFullYear();
     
     const payload = {
       title,
