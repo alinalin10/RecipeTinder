@@ -52,6 +52,7 @@ router.post('/', async (req, res) => {
       steps,
       ingredients,
       newIngredient,
+      time,
       image
     } = req.body
 
@@ -69,6 +70,7 @@ router.post('/', async (req, res) => {
       steps,
       ingredients,
       newIngredient,
+      time,
       image
     })
 
