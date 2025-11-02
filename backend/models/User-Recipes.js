@@ -11,13 +11,14 @@ const userRecipes = new Schema({
     description: { type: String },
     prepTime: { type: Number },
     cookTime: { type: Number },
-    calories: { type: String },
+    calories: { type: Number },
     cuisine: { type: String },
-    difficulty: { type: String },
+    difficulty: { type: Number },
     steps: { type: [String] },
     image: { type: String },
     ingredients: { type: [String] },
-    time: { type: String, },
+}, {
+  timestamps: true
 });
 
 userRecipes.set('toJSON', {
