@@ -1,8 +1,6 @@
 import React from 'react'
 import MakeRecipe from '../../components/MakeRecipe'
 
-
-
 const page = () => {
   return (
     <div>
