@@ -24,12 +24,13 @@ const loginUser = async (req, res) => {
         const token = createToken(user._id)
 
         res.status(200).json({
+            userId: user._id,
             email: user.email,
             username: user.username,
             firstname: user.firstname,
             lastname: user.lastname,
             token,
-            message: 'User created successfully'
+            message: 'User logged in successfully'
         })
     }
     catch(error) 
@@ -50,6 +51,7 @@ const signupUser = async (req, res) => {
         const token = createToken(user._id)
 
         res.status(200).json({
+            userId: user._id,
             email: user.email,
             username: user.username,
             firstname: user.firstname,
@@ -66,4 +68,52 @@ const signupUser = async (req, res) => {
 }
 
 
-module.exports = {signupUser, loginUser }
+//update user preferences
+const updateUserPreferences = async (req, res) => {
+    const { userId } = req.params;
+    const { dietary, cuisines } = req.body;
+
+    try {
+        // Find user and update preferences
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    'preferences.dietary': dietary,
+                    'preferences.cuisines': cuisines
+                }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({
+            message: 'Preferences updated successfully',
+            preferences: user.preferences
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+//get user preferences
+const getUserPreferences = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findById(userId).select('preferences');
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json(user.preferences);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = {signupUser, loginUser, updateUserPreferences, getUserPreferences }

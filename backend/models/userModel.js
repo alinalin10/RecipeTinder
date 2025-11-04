@@ -19,7 +19,7 @@ const preferences = new Schema({
   },
   time: { type: Number, default: 60 },
   
-  cuisines: { like: [String], dislike: [String] },
+  cuisines: { like: [String]},
   /*
   // this field depends on api we use
   nutritionTargets: { caloriesMax: Number, proteinMin: Number },
