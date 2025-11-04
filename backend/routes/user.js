@@ -1,7 +1,7 @@
 const express = require('express')
 
-//controller function
-const {signupUser, loginUser} = require('../controllers/userController')
+//controller functions
+const { signupUser, loginUser, updateUserPreferences, getUserPreferences } = require('../controllers/userController')
 
 //makes an instance of the express router
 const router = express.Router()
@@ -11,5 +11,11 @@ router.post('/login', loginUser)
 
 //signup route
 router.post('/signup', signupUser)
+
+// update user preferences
+router.patch('/:userId/preferences', updateUserPreferences)
+
+// get user preferences
+router.get('/:userId/preferences', getUserPreferences)
 
 module.exports = router
