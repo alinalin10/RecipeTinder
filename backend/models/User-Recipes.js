@@ -5,19 +5,20 @@ const model = mongoose.model;
 
 const userRecipes = new Schema({
     title: { type: String, required: true },
-    user: { type: String },
+    user: { type: String, required: true },
     course: { type: String, required: true },
     servings: { type: String, required: true },
     description: { type: String },
     prepTime: { type: Number },
     cookTime: { type: Number },
-    calories: { type: String },
+    calories: { type: Number },
     cuisine: { type: String },
-    difficulty: { type: String },
+    difficulty: { type: Number },
     steps: { type: [String] },
     image: { type: String },
     ingredients: { type: [String] },
-    time: { type: Number, },
+}, {
+  timestamps: true
 });
 
 userRecipes.set('toJSON', {

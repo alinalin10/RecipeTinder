@@ -1,52 +1,101 @@
 "use client"
-import React, { useState } from 'react'
-import { GoPencil } from "react-icons/go";
+import React, { useState, useEffect } from 'react'
+import { useAuthContext } from '../../../hooks/useAuthContext'
+import { updateUserPreferences, getUserPreferences } from '../../utils/api'
 
 const UserPref3 = () => {
-    const cuisines = [  "Thai", "Japanese", "Mexican", "Nigerian",
-  "Hawaiin", "Turkish", "Vietnamese", "Cuban",
-  "Indian", "Chinese", "French", "Spanish",
-  "Type", "Type", "Type", "Type", "Type", "Type", "Type", "Type"
-];
-    const [isEditing,setIsEditing] = useState(false) 
-    const [selectedcuisine,setSelectedCuisine] = useState([])
+    const { user } = useAuthContext()
+    const cuisines = [  
+        "Thai", "Japanese", "Mexican", "Nigerian",
+        "Hawaiian", "Turkish", "Vietnamese", "Cuban",
+        "Indian", "Chinese", "French", "Spanish",
+        "Italian", "Greek", "Korean", "Mediterranean"
+    ];
+    
+    const [selectedCuisine, setSelectedCuisine] = useState<string[]>([])
+    const [loading, setLoading] = useState(false)
 
-    const toggleOption = (option, list, setList) => {
-        setList(prev =>
-          prev.includes(option)
-            ? prev.filter(item => item !== option)
-            : [...prev, option]
-        );
-    };  
+    // Load existing preferences on component mount
+    useEffect(() => {
+        if (user?.userId) {
+            loadPreferences()
+        }
+    }, [user])
+
+    const loadPreferences = async () => {
+        try {
+            const preferences = await getUserPreferences(user.userId)
+            if (preferences.cuisines) {
+                setSelectedCuisine(preferences.cuisines.like || [])
+            }
+        } catch (error) {
+            console.error('Failed to load preferences:', error)
+        }
+    }
+
+    const toggleCuisine = async (cuisine: string) => {
+        if (loading) return // Prevent clicks during save
+        
+        setLoading(true)
+        
+        try {
+            let newCuisines: string[]
+            
+            if (selectedCuisine.includes(cuisine)) {
+                newCuisines = selectedCuisine.filter(item => item !== cuisine)
+            } else {
+                newCuisines = [...selectedCuisine, cuisine]
+            }
+            
+            setSelectedCuisine(newCuisines)
+
+            // Auto-save the changes
+            const cuisinePreferences = {
+                cuisines: {
+                    like: newCuisines
+                }
+            }
+
+            await updateUserPreferences(user.userId, cuisinePreferences)
+        } catch (error) {
+            console.error('Failed to save preferences:', error)
+            // Revert the change on error
+            setSelectedCuisine(selectedCuisine)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className='max-w-4xl mx-auto mt-10'>
-            {/* Rest */}
-                <div className='flex items-center justify-between mb-2'>
-                    <h1 className='tracking-wide text-rose-500'>Cuisines</h1>
-                    <div className='flex items-center gap-2'>
-                      <button onClick={() => setIsEditing(!isEditing)} className={`transition ${isEditing ? 'text-rose-600' : 'text-rose-400'}`}><GoPencil/></button>
-                      {isEditing && <span className='text-sm text-amber-900 italic'>Editing...</span>}
-                    </div>
-                </div>
-                <div className='bg-rose-50 rounded-xl p-6 space-y-4'>
-                    <div>
-                        <p className='text-black mb-2'>Cuisine Choices</p>
-                        <div className='flex flex-wrap gap-2'>
-                            {cuisines.map(option3 => (
-                                <button key={option3} onClick={() => isEditing && toggleOption(option3, selectedcuisine, setSelectedCuisine)}
-                                    className={`px-3 py-1 space-x-2 rounded-lg text-sm font-medium transition ${
-                                    selectedcuisine.includes(option3)
+            <div className='flex items-center justify-between mb-2'>
+                <h1 className='tracking-wide text-rose-500'>Cuisines</h1>
+                {loading && <span className='text-sm text-amber-600 italic'>Saving...</span>}
+            </div>
+            
+            <div className='bg-rose-50 rounded-xl p-6 space-y-4'>
+                <div>
+                    <p className='text-black mb-2'>Cuisine Choices</p>
+                    <div className='flex flex-wrap gap-2'>
+                        {cuisines.map(cuisine => (
+                            <button 
+                                key={cuisine} 
+                                onClick={() => toggleCuisine(cuisine)}
+                                disabled={loading}
+                                className={`px-3 py-1 rounded-lg text-sm font-medium transition cursor-pointer hover:opacity-80 disabled:opacity-50 ${
+                                    selectedCuisine.includes(cuisine)
                                         ? 'bg-rose-500 text-white'
-                                        : 'bg-gray-200 text-gray-700'
-                                    } ${isEditing ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
-                                >
-                                    {option3}
-                                </button>
-                            ))}
-                        </div>
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                            >
+                                {cuisine}
+                            </button>
+                        ))}
                     </div>
                 </div>
+            </div>
         </div>
     )
-    }
-export default UserPref3        
+}
+
+export default UserPref3

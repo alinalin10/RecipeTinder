@@ -1,13 +1,11 @@
 import React from 'react'
-import Makerecipe from '../../components/Makerecipe'
-
-
+import MakeRecipe from '../../components/MakeRecipe'
 
 const page = () => {
   return (
     <div>
       <div className='bg-white'>
-          <Makerecipe />
+          <MakeRecipe />
       </div>
     </div>
 
