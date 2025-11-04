@@ -7,7 +7,7 @@ const userRecipes = new Schema({
     title: { type: String, required: true },
     user: { type: String, required: true },
     course: { type: String, required: true },
-    servings: { type: String, required: true },
+    servings: { type: Number, required: true },
     description: { type: String },
     prepTime: { type: Number },
     cookTime: { type: Number },
