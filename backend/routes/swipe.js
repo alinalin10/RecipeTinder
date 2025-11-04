@@ -1,12 +1,12 @@
 // routes/swipe.js
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth'); // Your auth middleware
+const auth = require('../middleware/requireAuth'); // Your auth middleware
 const {
     saveRecipe,
     getSavedRecipes,
     deleteSavedRecipe
-} = require('../controllers/recipeController');
+} = require('../controllers/swipeController');
 
 // Save/Update a recipe (like or bookmark)
 // POST /api/recipes/save

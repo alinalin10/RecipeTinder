@@ -1,5 +1,5 @@
 // controllers/recipeController.js
-const SavedRecipe = require('../models/savedRecipe');
+const SavedRecipe = require('../models/savedRecipes');
 
 // Save/Update a recipe
 const saveRecipe = async (req, res) => {
@@ -103,7 +103,6 @@ const getSavedRecipes = async (req, res) => {
             },
             filters: {
                 action: action || 'none',
-                recipeType: recipeType || 'none',
                 alphabetical: alphabetical === 'true'
             }
         });
