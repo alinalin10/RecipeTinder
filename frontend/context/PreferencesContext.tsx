@@ -10,7 +10,6 @@ interface DietaryPreferences {
 
 interface CuisinePreferences {
   like: string[]
-  dislike: string[]
 }
 
 interface UserPreferences {
@@ -36,7 +35,7 @@ export const PreferencesProvider: React.FC<PreferencesProviderProps> = ({ childr
   const { user } = useAuthContext()
   const [preferences, setPreferences] = useState<UserPreferences>({
     dietary: { diets: [], excludeIngredients: [] },
-    cuisines: { like: [], dislike: [] }
+    cuisines: { like: [] }
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -54,7 +53,7 @@ export const PreferencesProvider: React.FC<PreferencesProviderProps> = ({ childr
       const userPrefs = await getUserPreferences(user.userId)
       setPreferences({
         dietary: userPrefs.dietary || { diets: [], excludeIngredients: [] },
-        cuisines: userPrefs.cuisines || { like: [], dislike: [] }
+        cuisines: userPrefs.cuisines || { like: [] }
       })
     } catch (err) {
       setError('Failed to load preferences')

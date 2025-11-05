@@ -1,16 +1,20 @@
 "use client"
 import React, { useState } from 'react'
+import { useAuthContext } from '../../../hooks/useAuthContext'
 import { GoPencil } from "react-icons/go";
 import { IoMdCheckmark } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
 
 const UserPref = () => {
+    const { user } = useAuthContext()
     const [image,setImage] = useState('/UserImage.png')
     const [isEditing, setIsEditing] = useState(false)
     const [preview, setPreview] = useState<string | null>(null)
 
     const handleSave = () =>{
-        setImage(preview)
+        if (preview) {
+            setImage(preview)
+        }
         setPreview(null)
         setIsEditing(false)
     }
@@ -18,7 +22,7 @@ const UserPref = () => {
         setPreview(null)
         setIsEditing(false)
     }
-    const imageChange = (e) => {
+    const imageChange = (e: any) => {
         const file = e.target.files[0];
         if (file) {
             const tempUrl = URL.createObjectURL(file)
@@ -30,11 +34,15 @@ const UserPref = () => {
     <div className='max-w-4xl mx-auto w-[80%] bg-white '>
         <div className='w-full p-6 flex justify-between items-center'>
             <div className='flex items-center space-x-8 mt-20'>
-                <img className={`rounded-full w-40 h-40 p-4' ${!preview ? "bg-rose-100": ""} `} src={preview || image} alt="User" />
+                <img className={`rounded-full w-40 h-40 p-4 ${!preview ? "bg-rose-100": ""} `} src={preview || image} alt="User" />
 
                 <div>
-                    <p className='text-rose-500 text-lg font-semibold py-3'>@username</p>
-                    <p className='text-sm italic text-gray-600'>Joined October 3rd</p>
+                    <p className='text-rose-500 text-lg font-semibold py-3'>{user?.username ? `@${user.username}` : '@username'}</p>
+                    <p className='text-sm italic text-gray-600'>
+                        {user?.createdAt
+                            ? `Joined ${new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`
+                            : 'Joined —'}
+                    </p>
                 </div>
             </div>
             {/* Right */}

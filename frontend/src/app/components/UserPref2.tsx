@@ -5,7 +5,7 @@ import { updateUserPreferences, getUserPreferences } from '../../utils/api'
 
 const UserPref2 = () => {
     const { user } = useAuthContext()
-    const dietOptions = ["Vegan", "Glutenfree", "Egg-free"]
+    const dietOptions = ["Vegan", "Glutenfree", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Pescatarian", "Paleo", "Primal", "Low FODMAP", "Whole30"]
     const excludedOptions = ["Nuts", "Oil", "Milk"]
 
     const [selectedDiet, setSelectedDiet] = useState<string[]>([])

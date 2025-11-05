@@ -1,4 +1,4 @@
-import MakeRecipe from "../../components/MakeRecipe";
+import MakeRecipe from "../../components/Makerecipe";
 
 
 const About = () => {

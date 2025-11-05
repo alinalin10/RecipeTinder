@@ -1,6 +1,7 @@
 'use client';
 import React from 'react'
 import { useState, useRef, FormEvent, useContext } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMakeRecipe } from '../../../hooks/useMakeRecipe'
 import { AuthContext } from '../../../context/AuthContext'
 
@@ -23,6 +24,7 @@ const MakeRecipe = () => {
 
   const { makerecipe, error, isLoading, success, clearError } = useMakeRecipe()
   const { user } = useContext(AuthContext);
+  const router = useRouter();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +57,8 @@ const MakeRecipe = () => {
     e.preventDefault();
 
     if (!user) {
-      alert("You must be logged in to make a recipe.");
+      // redirect unauthenticated users to the signup page instead of showing an alert
+      router.push('/signup');
       return;
     }
 

@@ -6,12 +6,12 @@ import { updateUserPreferences, getUserPreferences } from '../../utils/api'
 const UserPref3 = () => {
     const { user } = useAuthContext()
     const cuisines = [  
-        "Thai", "Japanese", "Mexican", "Nigerian",
-        "Hawaiian", "Turkish", "Vietnamese", "Cuban",
-        "Indian", "Chinese", "French", "Spanish",
-        "Italian", "Greek", "Korean", "Mediterranean"
-    ];
-    
+        "African", "Asian", "American", "British", "Cajun", "Caribbean",
+        "Chinese", "Eastern European", "European", "French", "German",
+        "Greek", "Indian", "Irish", "Italian", "Japanese", "Jewish",
+        "Korean", "Latin American", "Mediterranean", "Mexican",
+        "Middle Eastern", "Nordic", "Southern", "Spanish", "Thai", "Vietnamese"];
+
     const [selectedCuisine, setSelectedCuisine] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
 
