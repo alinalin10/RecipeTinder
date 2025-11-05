@@ -14,7 +14,6 @@ export default function NavBar() {
     logout()
     router.push('/login')
   }
-
   return (
     <nav>
      {/* Left Logo */}
