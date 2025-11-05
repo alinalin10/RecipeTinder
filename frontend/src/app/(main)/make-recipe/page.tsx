@@ -1,5 +1,5 @@
 import React from 'react'
-import MakeRecipe from '../../components/Makerecipe'
+import MakeRecipe from '../../components/MakeRecipe'
 import ProtectedRoute from '@/app/components/ProtectedRoute'
 
 const page = () => {
