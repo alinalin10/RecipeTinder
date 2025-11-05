@@ -77,3 +77,21 @@ nav {
   border-radius: 50%;
   cursor: pointer;
 }
+
+/* Logout button should look like the nav links */
+.logout-btn,
+.links button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.logout-btn:hover,
+.links button:hover {
+  color: #e91e63;
+}

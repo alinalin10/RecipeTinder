@@ -1,8 +1,20 @@
+"use client"
 import Link from "next/link";
 import "./NavBar.css";
 import Image from "next/image";
+import { useAuthContext } from '../../../hooks/useAuthContext'
+import { useLogout } from '../../../hooks/useLogout'
+import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
+  const { user } = useAuthContext()
+  const { logout } = useLogout()
+  const router = useRouter()
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
+
   return (
     <nav>
      {/* Left Logo */}
@@ -19,7 +31,11 @@ export default function NavBar() {
         <Link href="/about">About</Link>
         <Link href="/make-recipe">Share Recipes</Link>
         <Link href="/recipes">My Recipes</Link>
-        <Link href="/login">Login</Link>
+        {!user ? (
+          <Link href="/login">Login</Link>
+        ) : (
+          <button onClick={handleLogout} className="logout-btn">Logout</button>
+        )}
       </div>
 
      {/* Sign up / User */}
