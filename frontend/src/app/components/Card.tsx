@@ -14,18 +14,20 @@ const Card = ({
   difficulty,
   time,
   recipe,
+  recipeType = 'userMade', // default to userMade if no type provided
   index
 }: {
   id: number | string,
   image: string,
   cards: any[],
   setCards: React.Dispatch<React.SetStateAction<any[]>>,
-  name?: string,
+  name: string,
   title?: string,
   user?: string,
   rating?: string,
   difficulty?: string,
   time?: string,
+  recipeType: string,
   recipe?: string,
   index: number
 }) => {
@@ -35,8 +37,37 @@ const Card = ({
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
     const rotate = useTransform(x, [-250, 250], [-18, 18])
 
+    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
+        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+
+        console.log('Token value:', token); // ADD THIS
+        console.log('Token length:', token?.length); // ADD THIS
+
+        console.log('Token exists:', !!token); //Debugging line
+        const response = await fetch('http://localhost:4000/api/recipes/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`// Added authorization header
+            },
+            body: JSON.stringify({
+                recipeId: recipeId,
+                recipeType: recipeType,
+                recipeTitle: recipeTitle,
+                action: action
+            })
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to save recipe');
+        } else {
+            const data = await response.json();
+            console.log('Recipe saved:', data);
+        }
+    }
+
     // Front card disappears when dragged and let go
-    const handleDragEnd = () => {
+    const handleDragEnd = async () => {
         const currentX = x.get();
         if (Math.abs(currentX) > 150) {
             const direction = currentX > 0 ? 1 : -1;
@@ -49,6 +80,10 @@ const Card = ({
                     setCards(prev => prev.filter(v => (v.id || v._id) !== id));
                 }
             });
+
+            if (direction === 1) {
+                await saveRecipe(id, recipeType, name, 'liked');
+            }
         } else {
             animate(x, 0, { type: 'spring', stiffness: 300, damping: 25 });
         }
