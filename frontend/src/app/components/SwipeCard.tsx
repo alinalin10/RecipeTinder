@@ -6,7 +6,7 @@ import styles from './swipeCards.module.css';
 
 
 // Returns the stack of cards and all their data
-const SwipeCards = ({ cardData }: { cardData: CardData[] }) => {
+const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsEmpty?: () => void }) => {
     const [cards, setCards] = useState<CardData[]>(cardData ?? []);
 
       const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
@@ -42,6 +42,14 @@ const SwipeCards = ({ cardData }: { cardData: CardData[] }) => {
         console.log("Updated cardData:", cardData);
         setCards(cardData ?? []);
     }, [cardData]);
+
+    // Detect when cards run out and trigger refresh
+    useEffect(() => {
+        if (cards.length === 0 && cardData.length === 0 && onCardsEmpty) {
+            console.log("No more cards - triggering auto-refresh");
+            onCardsEmpty();
+        }
+    }, [cards.length, cardData.length, onCardsEmpty]);
 
     const removeTopCard = () => {
         setCards(prevCards => prevCards.slice(0, -1));

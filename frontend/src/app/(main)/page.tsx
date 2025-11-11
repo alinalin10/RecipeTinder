@@ -30,11 +30,26 @@ export default function Home() {
   const recipesContext = useRecipesInfoContext();
   const userRecipes = recipesContext?.recipes || [];
   const [cardData, setCardData] = useState<CardData[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Load random recipes when page loads
   useEffect(() => {
     getRandomRecipes(10); // Fetch 10 random recipes from Spoonacular
   }, []);
+
+  // Function to handle when cards run out - automatically fetch more
+  const handleCardsEmpty = () => {
+    console.log("Cards empty, fetching more recipes...");
+    setIsRefreshing(true);
+    getRandomRecipes(10);
+  };
+
+  // Reset refreshing state when new recipes arrive
+  useEffect(() => {
+    if (cardData.length > 0 && isRefreshing) {
+      setIsRefreshing(false);
+    }
+  }, [cardData.length, isRefreshing]);
 
   // Transform and merge both Spoonacular and user recipes
   useEffect(() => {
@@ -82,22 +97,6 @@ export default function Home() {
     setCardData(shuffled);
   }, [recipes, userRecipes]);
 
-  // Loading state
-  if (loading && cardData.length === 0) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontSize: '24px',
-        color: '#666'
-      }}>
-        Loading delicious recipes...
-      </div>
-    );
-  }
-
   // Error state
   if (error && cardData.length === 0) {
     return (
@@ -130,7 +129,25 @@ export default function Home() {
     );
   }
 
-  // No recipes state
+  // Auto-refreshing state (when cards run out)
+  if (isRefreshing || (loading && cardData.length === 0)) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '20px',
+        color: '#666'
+      }}>
+        <div style={{ marginBottom: '20px', fontSize: '40px' }}>🔄</div>
+        <p>{isRefreshing ? 'Loading more delicious recipes...' : 'Loading delicious recipes...'}</p>
+      </div>
+    );
+  }
+
+  // No recipes state (shouldn't happen with auto-refresh, but keep as fallback)
   if (cardData.length === 0) {
     return (
       <div style={{
@@ -163,6 +180,6 @@ export default function Home() {
   }
 
   return (
-    <SwipeCards cardData={cardData} />
+    <SwipeCards cardData={cardData} onCardsEmpty={handleCardsEmpty} />
   );
 }

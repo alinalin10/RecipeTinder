@@ -1,7 +1,7 @@
 'use client';
 import { useParams } from 'next/navigation';
 import React, { useState, useContext } from 'react'
-import { useRecipesInfoContext } from '../../../../../hooks/useRecipesContext';
+import { useRecipesInfoContext } from '../../../../hooks/useRecipesContext';
 import styles from './recipe-description.module.css';
 
 const RecipeDescription = () => {
