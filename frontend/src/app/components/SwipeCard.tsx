@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from 'react'
-import Card from './Card'
+import Card, { type CardData } from './Card'
 import styles from './swipeCards.module.css';
 
 
 // Returns the stack of cards and all their data
-const SwipeCards = ({ cardData }: { cardData: any[] }) => {
-    const [cards, setCards] = useState(cardData ?? []);
+const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsEmpty?: () => void }) => {
+    const [cards, setCards] = useState<CardData[]>(cardData ?? []);
 
       const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
@@ -16,7 +16,7 @@ const SwipeCards = ({ cardData }: { cardData: any[] }) => {
         console.log('Token length:', token?.length); // ADD THIS
 
         console.log('Token exists:', !!token); //Debugging line
-        const response = await fetch('http://localhost:4000/api/recipes/save', {
+        const response = await fetch('http://localhost:4000/api/swipe/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -43,6 +43,14 @@ const SwipeCards = ({ cardData }: { cardData: any[] }) => {
         setCards(cardData ?? []);
     }, [cardData]);
 
+    // Detect when cards run out and trigger refresh
+    useEffect(() => {
+        if (cards.length === 0 && cardData.length === 0 && onCardsEmpty) {
+            console.log("No more cards - triggering auto-refresh");
+            onCardsEmpty();
+        }
+    }, [cards.length, cardData.length, onCardsEmpty]);
+
     const removeTopCard = () => {
         setCards(prevCards => prevCards.slice(0, -1));
     };
@@ -52,12 +60,17 @@ const SwipeCards = ({ cardData }: { cardData: any[] }) => {
       if (prevCards.length === 0) return prevCards;
 
       const topCard = prevCards[prevCards.length - 1];
-      saveRecipe(
-        topCard._id || topCard.id,
-        topCard.recipeType,
-        topCard.recipeTitle,
-        'liked'
-      );
+      const recipeId = topCard._id || topCard.id;
+      const recipeTitle = topCard.name || topCard.title;
+
+      if (recipeId && recipeTitle) {
+        saveRecipe(
+          recipeId,
+          topCard.recipeType || 'userMade',
+          recipeTitle,
+          'liked'
+        );
+      }
 
       return prevCards.slice(0, -1);
     });
