@@ -32,10 +32,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <RecipesInfoContextProvider>
-          <Providers>
+            <Providers>
             <NavBar />
             {children}
-          </Providers>
+            </Providers>
         </RecipesInfoContextProvider>
       </body>
     </html>
