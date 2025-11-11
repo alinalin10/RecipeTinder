@@ -49,7 +49,7 @@ const UserPref2 = () => {
                     </div>
                 </div>
                 <div>
-                      <p className='mb-2'>Excluded Ingredients</p>
+                      <p className='mb-2 text-black'>Excluded Ingredients</p>
                       <div className='flex flex-wrap gap-2'>
                         {excludedOptions.map(option2 => (
                             <button key={option2} onClick={() => isEditing && toggleOption(option2, selectExclude, setSelectExcluded)}

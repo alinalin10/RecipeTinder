@@ -14,8 +14,26 @@ const Makerecipe = () => {
   const  [ingredients, setIngredients] = useState<string[]>([])
   const  [newIngredient, setNewIngredient] = useState("")
   const  [image, setImage] = useState<string | null>(null)
-
+  const courseOptions = [
+    {id:1, dish:"main course"},
+    {id:2, dish:"side dish"},
+    {id:3, dish:"dessert"},
+    {id:4, dish:"appetizer"},
+    {id:5, dish:"salad"},
+    {id:6, dish:"bread"},
+    {id:7, dish:"breakfast"},
+    {id:8, dish:"soup"},
+    {id:9, dish:"beverage"},
+    {id:10, dish:"sauce"},
+    {id:11, dish:"marinade"},
+    {id:12, dish:"fingerfood"},
+    {id:13, dish:"snack"},
+    {id:14, dish:"drink"},
+  ]
+  const [isOpen,setIsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // const 
 
   function onDropFile(files: FileList | null) {
     if (!files || !files[0]) return;
@@ -67,7 +85,19 @@ const Makerecipe = () => {
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
               <div>
                 <label className='mb-2 block text-sm font-semibold'>Course</label>
-                <input type="text" value={course} onChange={(e)=> setCourse(e.target.value)} placeholder='Lunch/Dinner' required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+                <select
+                value={course}
+                onChange={(e) => setCourse(e.target.value)}
+                className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400 appearance-none"
+              >
+                <option value="">Select Course</option>
+                {courseOptions.map((option) => (
+                  <option key={option.id} value={option.dish} >
+                    {option.dish}
+                  </option>
+                ))}
+              </select>
+                {/* <input type="text" value={course} onChange={(e)=> setCourse(e.target.value)} placeholder='Lunch/Dinner' required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/> */}
               </div>
               <div>
                 <label className='mb-2 block text-sm font-semibold'>Serving Size</label>
@@ -83,8 +113,8 @@ const Makerecipe = () => {
                 <label className='mb-2 block text-sm font-semibold'>Prep Time</label>
                 <div className='flex items-center gap-2'>
                   <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
-                      <button type='button' onClick={()=> setPrepTime(prepTime - 1)} className='px-3 py-2 text-sm'>-</button>
-                      <input type="number" value={prepTime} placeholder='' onChange={(e) => setPrepTime(Number(e.target.value))} className='w-16 bg-white p-2 text-center text-sm'/>
+                      <button type='button' onClick={()=> setPrepTime(Math.max(prepTime - 1,0))} className='px-3 py-2 text-sm'>-</button>
+                      <input value={prepTime} placeholder='' onChange={(e) => setPrepTime(Math.max(Number(e.target.value),0))} className='w-16 bg-white p-2 text-center text-sm'/>
                       <button type='button' onClick={()=> setPrepTime(prepTime + 1)} className='px-3 py-2 text-sm'>+</button>
                   </div>
                   <span className='text-sm text-neutral-500'>minutes</span>
@@ -94,8 +124,8 @@ const Makerecipe = () => {
                 <label className='mb-2 block text-sm font-semibold'>Cooking Time</label>
                 <div className='flex items-center gap-2'>
                   <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
-                      <button type='button' className='px-3 py-2 text-sm' onClick={()=> setCookTime(cookTime - 1)}>-</button>
-                      <input type="number" value={cookTime} placeholder='' onChange={(e) => setCookTime(Number(e.target.value))} className='w-16  bg-white p-2 text-center text-sm'/>
+                      <button type='button' className='px-3 py-2 text-sm' onClick={()=> setCookTime(Math.max(cookTime - 1,0))}>-</button>
+                      <input  value={cookTime} placeholder='' onChange={(e) => setCookTime(Number(e.target.value))} className='w-16  bg-white p-2 text-center text-sm'/>
                       <button type="button" onClick={()=> setCookTime(cookTime + 1)} className='px-3 py-2 text-sm'>+</button>
                   </div>
                   <span className='text-sm text-neutral-500'>minutes</span>
@@ -120,7 +150,7 @@ const Makerecipe = () => {
                   key = {i}
                   className='flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm shadow-sm'
                   >
-                  <span className='truncate'>• {ing}</span>
+                  <span className='truncate'>{ing}</span>
                   <button type="button" onClick={() => handleRemoveIngredient(i)} className='ml-3 rounded-lg px-2 py-1 text-xs text-neutral-500 hover:bg-neutral-100'>Remove</button>
                   </div>
                 ))}

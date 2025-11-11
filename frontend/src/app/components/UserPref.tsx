@@ -49,7 +49,7 @@ const UserPref = () => {
                     </div>
                         ) : (
                     <div>
-                        <label htmlFor="imageUpload" className='text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:text-rose-900 bg-rose-300'>
+                        <label htmlFor="imageUpload" className=' text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:text-rose-900 bg-rose-300'>
                             <GoPencil/>
                         </label>
                         <input type="file" id="imageUpload" accept='image/*' className='hidden' onChange={imageChange}/>
@@ -78,3 +78,4 @@ export default UserPref
 //                                 <p className='text-sm italic text-gray-600'>Joined October 3rd</p>
 //                                 </>
 //                     )}
+
