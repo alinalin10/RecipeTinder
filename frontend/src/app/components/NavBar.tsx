@@ -2,8 +2,8 @@
 import Link from "next/link";
 import "./NavBar.css";
 import Image from "next/image";
-import { useAuthContext } from '../../../hooks/useAuthContext'
-import { useLogout } from '../../../hooks/useLogout'
+import { useAuthContext } from '../../hooks/useAuthContext'
+import { useLogout } from '../../hooks/useLogout'
 import { useRouter } from 'next/navigation'
 
 export default function NavBar() {

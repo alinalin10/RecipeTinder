@@ -16,7 +16,7 @@ const SwipeCards = ({ cardData }: { cardData: CardData[] }) => {
         console.log('Token length:', token?.length); // ADD THIS
 
         console.log('Token exists:', !!token); //Debugging line
-        const response = await fetch('http://localhost:4000/api/recipes/save', {
+        const response = await fetch('http://localhost:4000/api/swipe/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,12 +52,17 @@ const SwipeCards = ({ cardData }: { cardData: CardData[] }) => {
       if (prevCards.length === 0) return prevCards;
 
       const topCard = prevCards[prevCards.length - 1];
-      saveRecipe(
-        topCard._id || topCard.id,
-        topCard.recipeType,
-        topCard.recipeTitle,
-        'liked'
-      );
+      const recipeId = topCard._id || topCard.id;
+      const recipeTitle = topCard.name || topCard.title;
+
+      if (recipeId && recipeTitle) {
+        saveRecipe(
+          recipeId,
+          topCard.recipeType || 'userMade',
+          recipeTitle,
+          'liked'
+        );
+      }
 
       return prevCards.slice(0, -1);
     });

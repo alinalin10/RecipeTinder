@@ -51,6 +51,7 @@ export default function Home() {
           ? `Ready in ${recipe.readyInMinutes} min`
           : "Time unknown",
         recipe: recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.title.replace(/\s+/g, '-').toLowerCase()}-${recipe.id}`,
+        recipeType: 'spoonacular',
         fullRecipeData: recipe,
       }));
       transformedCards.push(...spoonacularCards);
@@ -70,6 +71,7 @@ export default function Home() {
             ? `${recipe.prepTime + recipe.cookTime} min`
             : "Time varies",
         recipe: `/recipe-description/${recipe._id}`,
+        recipeType: 'userMade',
         fullRecipeData: recipe,
       }));
       transformedCards.push(...userCards);
