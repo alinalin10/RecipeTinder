@@ -29,7 +29,7 @@ export default function NavBar() {
       <div className="links">
         <Link href="/about">About</Link>
         <Link href="/make-recipe">Share Recipes</Link>
-        <Link href="/recipes">My Recipes</Link>
+        <Link href="/myrecipes">My Recipes</Link>
         {!user ? (
           <Link href="/login">Login</Link>
         ) : (
