@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react'
-import { useAuthContext } from '../../../hooks/useAuthContext'
-import { useRouter } from 'next/navigation'
 import Card from './Card'
 import styles from './swipeCards.module.css';
 
@@ -11,10 +9,7 @@ import styles from './swipeCards.module.css';
 const SwipeCards = ({ cardData }: { cardData: any[] }) => {
     const [cards, setCards] = useState(cardData ?? []);
 
-    const { user } = useAuthContext()
-    const router = useRouter()
-
-    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
+      const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
 
         console.log('Token value:', token); // ADD THIS
@@ -25,7 +20,7 @@ const SwipeCards = ({ cardData }: { cardData: any[] }) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`// Added authorization header
             },
             body: JSON.stringify({
                 recipeId: recipeId,
@@ -53,26 +48,20 @@ const SwipeCards = ({ cardData }: { cardData: any[] }) => {
     };
 
     const likeTopCard = () => {
-        setCards(prevCards => {
-        if (prevCards.length === 0) return prevCards;
+    setCards(prevCards => {
+      if (prevCards.length === 0) return prevCards;
 
-            const topCard = prevCards[prevCards.length - 1];
-            if (!user) {
-                router.push('/signup')
-                return prevCards
-            }
+      const topCard = prevCards[prevCards.length - 1];
+      saveRecipe(
+        topCard._id || topCard.id,
+        topCard.recipeType,
+        topCard.recipeTitle,
+        'liked'
+      );
 
-            saveRecipe(
-                topCard._id || topCard.id,
-                topCard.recipeType,
-                topCard.recipeTitle,
-                'liked'
-            );
-
-            return prevCards.slice(0, -1);
-        });
-    };
-    
+      return prevCards.slice(0, -1);
+    });
+  };
     return (
         <div className={styles['card-stack']}>
             <div className={styles['card-wrapper']}>

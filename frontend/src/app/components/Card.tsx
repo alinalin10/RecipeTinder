@@ -1,7 +1,4 @@
-"use client"
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import { useAuthContext } from '../../../hooks/useAuthContext'
 import styles from './swipeCards.module.css';
 
 // Creates card component (id = place on stack, image = image, name = food, user = uploader, rating = rating, time = date uploaded, recipe = link to recipe, index = used to organize stack)
@@ -40,19 +37,8 @@ const Card = ({
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
     const rotate = useTransform(x, [-250, 250], [-18, 18])
 
-    const router = useRouter()
-    const { user: authUser } = useAuthContext()
-
     const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
-        // token is stored inside the user object in localStorage (saved on login/signup)
-        const stored = typeof window !== 'undefined' ? localStorage.getItem('user') : null
-        const token = stored ? (JSON.parse(stored).token || null) : null
-
-        // if no authenticated user/token, redirect to signup
-        if (!authUser || !token) {
-            router.push('/signup')
-            return
-        }
+        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
 
         console.log('Token value:', token); // ADD THIS
         console.log('Token length:', token?.length); // ADD THIS
@@ -73,13 +59,11 @@ const Card = ({
         })
 
         if (!response.ok) {
-            // push error to caller
-            const errText = await response.text().catch(() => '')
-            throw new Error(`Failed to save recipe: ${response.status} ${errText}`);
+            throw new Error('Failed to save recipe');
+        } else {
+            const data = await response.json();
+            console.log('Recipe saved:', data);
         }
-
-        const data = await response.json();
-        console.log('Recipe saved:', data);
     }
 
     // Front card disappears when dragged and let go
