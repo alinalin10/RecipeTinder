@@ -1,3 +1,5 @@
+'use client'
+import { useRouter } from 'next/navigation'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import styles from './swipeCards.module.css';
 
@@ -45,11 +47,30 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
     const rotate = useTransform(x, [-250, 250], [-18, 18])
 
-    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
-        const token = localStorage.getItem('token');
+    const router = useRouter()
 
-        console.log('Attempting to save recipe:', { recipeId, recipeType, recipeTitle, action });
-        console.log('Token exists:', !!token);
+    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
+        // token is stored inside localStorage.user as a JSON string { token: '...', ... }
+        let token: string | null = null
+        try {
+            const userStr = localStorage.getItem('user')
+            if (userStr) {
+                const userObj = JSON.parse(userStr)
+                token = userObj?.token || null
+            }
+        } catch (e) {
+            console.warn('Failed to parse stored user object', e)
+        }
+
+        console.log('Attempting to save recipe:', { recipeId, recipeType, recipeTitle, action })
+        console.log('Token exists:', !!token)
+
+        if (!token) {
+            // If user is not authenticated, send them to signup/login instead of attempting the API call
+            console.info('User not authenticated — redirecting to /signup')
+            router.push('/signup')
+            return
+        }
 
         const response = await fetch('http://localhost:4000/api/swipe/save', {
             method: 'POST',
@@ -65,14 +86,20 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
             })
         })
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error('Failed to save recipe:', response.status, data);
-            throw new Error(`Failed to save recipe: ${data.error || response.statusText}`);
+        let data: any = {}
+        try {
+            data = await response.json()
+        } catch (err) {
+            // response had no JSON body
+            data = {}
         }
 
-        console.log('Recipe saved successfully:', data);
+        if (!response.ok) {
+            console.error('Failed to save recipe:', response.status, data)
+            throw new Error(`Failed to save recipe: ${data.error || response.statusText}`)
+        }
+
+        console.log('Recipe saved successfully:', data)
     }
 
     // Front card disappears when dragged and let go
@@ -94,7 +121,12 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
                 const recipeId = id || _id;
                 const recipeTitle = name || title;
                 if (recipeId && recipeTitle) {
-                    await saveRecipe(recipeId, recipeType, recipeTitle, 'liked');
+                    try {
+                        await saveRecipe(recipeId, recipeType, recipeTitle, 'liked');
+                    } catch (err) {
+                        // Don't crash the UI if saving fails. Log and optionally show a toast in the future.
+                        console.error('saveRecipe failed', err);
+                    }
                 }
             }
         } else {
