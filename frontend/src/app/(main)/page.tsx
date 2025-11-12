@@ -51,50 +51,77 @@ export default function Home() {
     }
   }, [cardData.length, isRefreshing]);
 
+  // Fisher-Yates shuffle algorithm for unbiased randomization
+  const fisherYatesShuffle = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Interleave two arrays for even distribution
+  const interleaveArrays = <T,>(arr1: T[], arr2: T[]): T[] => {
+    const result: T[] = [];
+    const maxLength = Math.max(arr1.length, arr2.length);
+
+    for (let i = 0; i < maxLength; i++) {
+      if (i < arr1.length) result.push(arr1[i]);
+      if (i < arr2.length) result.push(arr2[i]);
+    }
+
+    return result;
+  };
+
   // Transform and merge both Spoonacular and user recipes
   useEffect(() => {
-    const transformedCards: CardData[] = [];
-
     // Transform Spoonacular recipes
-    if (recipes && recipes.length > 0) {
-      const spoonacularCards = recipes.map((recipe) => ({
-        id: recipe.id,
-        url: recipe.image,
-        name: recipe.title,
-        user: "Spoonacular",
-        date: recipe.readyInMinutes
-          ? `Ready in ${recipe.readyInMinutes} min`
-          : "Time unknown",
-        recipe: recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.title.replace(/\s+/g, '-').toLowerCase()}-${recipe.id}`,
-        recipeType: 'spoonacular',
-        fullRecipeData: recipe,
-      }));
-      transformedCards.push(...spoonacularCards);
-    }
+    const spoonacularCards: CardData[] = (recipes && recipes.length > 0)
+      ? recipes.map((recipe) => ({
+          id: recipe.id,
+          url: recipe.image,
+          name: recipe.title,
+          user: "Spoonacular",
+          date: recipe.readyInMinutes
+            ? `Ready in ${recipe.readyInMinutes} min`
+            : "Time unknown",
+          recipe: recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.title.replace(/\s+/g, '-').toLowerCase()}-${recipe.id}`,
+          recipeType: 'spoonacular',
+          fullRecipeData: recipe,
+        }))
+      : [];
 
     // Transform user-created recipes
-    if (userRecipes && userRecipes.length > 0) {
-      const userCards = userRecipes.map((recipe: UserRecipe) => ({
-        _id: recipe._id,
-        image: recipe.image,
-        title: recipe.title,
-        user: recipe.user || "Community",
-        difficulty: recipe.difficulty,
-        date: recipe.time
-          ? `${recipe.time} min`
-          : (recipe.prepTime && recipe.cookTime)
-            ? `${recipe.prepTime + recipe.cookTime} min`
-            : "Time varies",
-        recipe: `/recipe-description/${recipe._id}`,
-        recipeType: 'userMade',
-        fullRecipeData: recipe,
-      }));
-      transformedCards.push(...userCards);
-    }
+    const userCards: CardData[] = (userRecipes && userRecipes.length > 0)
+      ? userRecipes.map((recipe: UserRecipe) => ({
+          _id: recipe._id,
+          image: recipe.image,
+          title: recipe.title,
+          user: recipe.user || "Community",
+          difficulty: recipe.difficulty,
+          date: recipe.time
+            ? `${recipe.time} min`
+            : (recipe.prepTime && recipe.cookTime)
+              ? `${recipe.prepTime + recipe.cookTime} min`
+              : "Time varies",
+          recipe: `/recipe-description/${recipe._id}`,
+          recipeType: 'userMade',
+          fullRecipeData: recipe,
+        }))
+      : [];
 
-    // Shuffle the combined array for variety
-    const shuffled = transformedCards.sort(() => Math.random() - 0.5);
-    setCardData(shuffled);
+    // Shuffle each array individually first
+    const shuffledSpoonacular = fisherYatesShuffle(spoonacularCards);
+    const shuffledUser = fisherYatesShuffle(userCards);
+
+    // Interleave for even distribution, then shuffle again for extra randomness
+    const interleaved = interleaveArrays(shuffledSpoonacular, shuffledUser);
+    const finalShuffled = fisherYatesShuffle(interleaved);
+
+    setCardData(finalShuffled);
+
+    console.log(`🎲 Shuffled ${spoonacularCards.length} Spoonacular + ${userCards.length} User recipes`);
   }, [recipes, userRecipes]);
 
   // Error state
