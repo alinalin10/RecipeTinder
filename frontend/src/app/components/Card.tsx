@@ -144,10 +144,19 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
     const recipeUrl = recipe || `/recipe-description/${cardId}`;
 
     // Contains all card info
+    // Only show the top card (last in array) and allow dragging only on top card
+    const isTopCard = index === cards.length - 1;
+
     return <motion.div
         className={styles['card']}
-        style={{ x, opacity, rotate }}
-        drag="x"
+        style={{
+            x,
+            opacity: isTopCard ? opacity : 0,
+            rotate,
+            zIndex: index,
+            pointerEvents: isTopCard ? 'auto' : 'none'
+        }}
+        drag={isTopCard ? "x" : false}
         dragConstraints={{
             left: 0,
             right: 0,
