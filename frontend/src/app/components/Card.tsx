@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
+import Link from 'next/link'
 import styles from './swipeCards.module.css';
 
 export interface CardData {
@@ -138,6 +139,10 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
     const recipeName = name || title;
     const cardId = id || _id;
 
+    // Determine if this is an external URL (Spoonacular) or internal (user recipe)
+    const isExternalRecipe = recipeType === 'spoonacular';
+    const recipeUrl = recipe || `/recipe-description/${cardId}`;
+
     // Contains all card info
     return <motion.div
         className={styles['card']}
@@ -158,7 +163,20 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
             </div>
             <div className={styles['same-row']}>
                 <p>{time || date || "October 23, 2025"}</p>
-                <a href={recipe || "/recipe-description/" + cardId} className={styles['recipe-link']}>View Recipe</a>
+                {isExternalRecipe ? (
+                    <a
+                        href={recipeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles['recipe-link']}
+                    >
+                        View Recipe ↗
+                    </a>
+                ) : (
+                    <Link href={recipeUrl} className={styles['recipe-link']}>
+                        View Recipe
+                    </Link>
+                )}
             </div>
         </div>
     </motion.div>
