@@ -10,7 +10,9 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
     const [cards, setCards] = useState<CardData[]>(cardData ?? []);
 
       const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        // Get the user object from localStorage and extract the token
+        const userJson = localStorage.getItem('user');
+        const token = userJson ? JSON.parse(userJson).token : null;
 
         console.log('Token value:', token); // ADD THIS
         console.log('Token length:', token?.length); // ADD THIS
