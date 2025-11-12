@@ -4,12 +4,13 @@ import { useState, useRef } from 'react'
 const Makerecipe = () => {
   const  [title, setTitle] = useState('')
   const  [course, setCourse] = useState('')
+  const  [cuisine, setCuisine] = useState('')
   const  [servings, setServings] = useState('')
   const  [description, setDescription] = useState('')
   const  [prepTime, setPrepTime] = useState(0)
   const  [cookTime, setCookTime] = useState(0)
+  const  [difficulty, setDifficulty] = useState(0)
   const  [calories, setCalories] = useState("")
-  const  [difficulty, setDifficulty] = useState('')
   const  [steps, setSteps] = useState('')
   const  [ingredients, setIngredients] = useState<string[]>([])
   const  [newIngredient, setNewIngredient] = useState("")
@@ -30,6 +31,36 @@ const Makerecipe = () => {
     {id:13, dish:"snack"},
     {id:14, dish:"drink"},
   ]
+  const cuisineOptions = [
+  { id: 1, cuisine: "African" },
+  { id: 2, cuisine: "Asian" },
+  { id: 3, cuisine: "American" },
+  { id: 4, cuisine: "British" },
+  { id: 5, cuisine: "Cajun" },
+  { id: 6, cuisine: "Caribbean" },
+  { id: 7, cuisine: "Chinese" },
+  { id: 8, cuisine: "Eastern European" },
+  { id: 9, cuisine: "European" },
+  { id: 10, cuisine: "French" },
+  { id: 11, cuisine: "German" },
+  { id: 12, cuisine: "Greek" },
+  { id: 13, cuisine: "Indian" },
+  { id: 14, cuisine: "Irish" },
+  { id: 15, cuisine: "Italian" },
+  { id: 16, cuisine: "Japanese" },
+  { id: 17, cuisine: "Jewish" },
+  { id: 18, cuisine: "Korean" },
+  { id: 19, cuisine: "Latin American" },
+  { id: 20, cuisine: "Mediterranean" },
+  { id: 21, cuisine: "Mexican" },
+  { id: 22, cuisine: "Middle Eastern" },
+  { id: 23, cuisine: "Nordic" },
+  { id: 24, cuisine: "Southern" },
+  { id: 25, cuisine: "Spanish" },
+  { id: 26, cuisine: "Thai" },
+  { id: 27, cuisine: "Vietnamese" },
+];
+
   const [isOpen,setIsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -80,17 +111,18 @@ const Makerecipe = () => {
           <div className='space-y-6'>
             <div>
               <label className="mb-2 block font-semibold text-sm">Recipe Title</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Jollof Rice' required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+              <input required type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Jollof Rice' required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
             </div>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
               <div>
                 <label className='mb-2 block text-sm font-semibold'>Course</label>
                 <select
                 value={course}
+                required
                 onChange={(e) => setCourse(e.target.value)}
                 className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400 appearance-none"
               >
-                <option value="">Select Course</option>
+                <option value="">Click to select Course</option>
                 {courseOptions.map((option) => (
                   <option key={option.id} value={option.dish} >
                     {option.dish}
@@ -101,23 +133,23 @@ const Makerecipe = () => {
               </div>
               <div>
                 <label className='mb-2 block text-sm font-semibold'>Serving Size</label>
-                <input type="text" value={servings} onChange={(e) => setServings(e.target.value)} placeholder = "2 servings" required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+                <input required type="text" onInput={(e) => {e.target.value = e.target.value.replace(/[^0-9]/g, ""); setServings(e.target.value);}} value={servings} onChange={(e) => setServings(e.target.value)} placeholder = "2 servings" required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
               </div>
             </div>
             <div>
               <label className='mb-2 block text-sm font-semibold'>Description</label>
-              <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Delicious and healthy meal option when you are short on time' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+              <input required type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Delicious and healthy meal option when you are short on time' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
             </div>
-            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+            <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
               <div>
                 <label className='mb-2 block text-sm font-semibold'>Prep Time</label>
                 <div className='flex items-center gap-2'>
                   <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
                       <button type='button' onClick={()=> setPrepTime(Math.max(prepTime - 1,0))} className='px-3 py-2 text-sm'>-</button>
-                      <input value={prepTime} placeholder='' onChange={(e) => setPrepTime(Math.max(Number(e.target.value),0))} className='w-16 bg-white p-2 text-center text-sm'/>
+                      <input required value={prepTime} placeholder='' onChange={(e) => setPrepTime(Math.max(Number(e.target.value),0))} className='w-16 bg-white p-2 text-center text-sm'/>
                       <button type='button' onClick={()=> setPrepTime(prepTime + 1)} className='px-3 py-2 text-sm'>+</button>
                   </div>
-                  <span className='text-sm text-neutral-500'>minutes</span>
+                  <span className='text-sm text-neutral-500 sm:hidden lg:block'>minutes</span>
                 </div>
               </div>
               <div>
@@ -125,21 +157,51 @@ const Makerecipe = () => {
                 <div className='flex items-center gap-2'>
                   <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
                       <button type='button' className='px-3 py-2 text-sm' onClick={()=> setCookTime(Math.max(cookTime - 1,0))}>-</button>
-                      <input  value={cookTime} placeholder='' onChange={(e) => setCookTime(Number(e.target.value))} className='w-16  bg-white p-2 text-center text-sm'/>
+                      <input required value={cookTime} placeholder='' onChange={(e) => setCookTime(Number(e.target.value))} className='w-16  bg-white p-2 text-center text-sm'/>
                       <button type="button" onClick={()=> setCookTime(cookTime + 1)} className='px-3 py-2 text-sm'>+</button>
                   </div>
-                  <span className='text-sm text-neutral-500'>minutes</span>
+                  <span className='text-sm text-neutral-500 sm:hidden lg:block'>minutes</span>
                 </div>
+              </div>
+              <div>
+                <div>
+                <label className='mb-2 block text-sm font-semibold'>Difficulty</label>
+                <div className='flex items-center gap-2'>
+                  <div className='flex items-center rounded-xl border border-neutral-200 bg-white shadow-sm '>
+                      <button type='button' className='px-3 py-2 text-sm' onClick={()=> setDifficulty(Math.max(difficulty - 1,0))}>-</button>
+                      <input required value={difficulty} placeholder='' onChange={(e) => setDifficulty(Number(e.target.value))} className='w-16  bg-white p-2 text-center text-sm'/>
+                      <button type="button" onClick={()=> setDifficulty(Math.min(difficulty + 1,5))} className='px-3 py-2 text-sm'>+</button>
+                  </div>
+                  <span className='text-sm text-neutral-500'></span>
+                </div>
+              </div>
               </div>
             </div>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
               <div>
                 <label className='block mb-2 text-sm font-semibold'>Calories</label>
-                <input type="text" value={calories} onChange={(e)=> setCalories(e.target.value)} placeholder='350 kcal' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+                <input required type="text" value={calories} onChange={(e)=> setCalories(e.target.value)} onInput={(e) => {e.target.value = e.target.value.replace(/[^0-9]/g, ""); setCalories(e.target.value);}} placeholder='350 kcal' className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
               </div>
-              <div>
+              {/* <div>
                 <label>Difficulty</label>
-                <input type="text" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder='Easy/Medium/Hard' className='w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+                <input required type="text" value={difficulty} onChange={(e) => setDifficult(e.target.value)} placeholder='Easy/Medium/Hard' className='w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/>
+              </div> */}
+              <div>
+                <label className='mb-2 block text-sm font-semibold'>Course</label>
+                <select
+                value={course}
+                required
+                onChange={(e) => setCuisine(e.target.value)}
+                className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400 appearance-none"
+              >
+                <option value="">Click to select Cuisine</option>
+                {cuisineOptions.map((option) => (
+                  <option key={option.id} value={option.cuisine} >
+                    {option.cuisine}
+                  </option>
+                ))}
+              </select>
+                {/* <input type="text" value={course} onChange={(e)=> setCourse(e.target.value)} placeholder='Lunch/Dinner' required className='w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-gray-400'/> */}
               </div>
             </div>
             <div>
@@ -155,7 +217,7 @@ const Makerecipe = () => {
                   </div>
                 ))}
                 <div className='flex-gap-2'>
-                  <input type="text" className='w-full flex-1 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-rose-400' placeholder='Add Ingredient' value={newIngredient} onChange={(e) => setNewIngredient(e.target.value)}/>
+                  <input required type="text" className='w-full flex-1 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-rose-400' placeholder='Add Ingredient' value={newIngredient} onChange={(e) => setNewIngredient(e.target.value)}/>
                   <button type="button" onClick={handleAddIngredient} className='mt-3 items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition bg-red-400 hover:border-rose-500 hover:cursor-pointer'>
                     <span className='text-lg'>+</span> Add Ingredient
                   </button>
@@ -194,7 +256,7 @@ const Makerecipe = () => {
               </div>
             </div>
           )}
-          <input type="file" ref={fileInputRef} accept='image/*' className='hidden' onChange={(e) => (e.target.files)}/>
+          <input required type="file" ref={fileInputRef} accept='image/*' className='hidden' onChange={(e) => (e.target.files)}/>
             </div>
           </div>
         </form>
