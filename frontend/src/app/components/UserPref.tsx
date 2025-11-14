@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import { useAuthContext } from '../../../hooks/useAuthContext'
+import { useAuthContext } from '../../hooks/useAuthContext'
 import { GoPencil } from "react-icons/go";
 import { IoMdCheckmark } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
