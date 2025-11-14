@@ -2,8 +2,8 @@
 import React from 'react'
 import { useState, useRef, FormEvent, useContext } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMakeRecipe } from '../../../hooks/useMakeRecipe'
-import { AuthContext } from '../../../context/AuthContext'
+import { useMakeRecipe } from '../../hooks/useMakeRecipe';
+import { AuthContext } from '../../context/AuthContext'; 
 
 const MakeRecipe = () => {
   const  [title, setTitle] = useState('')

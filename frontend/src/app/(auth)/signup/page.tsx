@@ -2,6 +2,7 @@
 import { useState, FormEvent } from 'react'
 import { useSignup } from '../../../hooks/useSignup'
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 const Signup = () => {
     const [username, setUsername] = useState('')
@@ -10,10 +11,14 @@ const Signup = () => {
     const [firstname, setFirstname] = useState('')
     const [lastname, setLastname] = useState('')
     const { signup, error, isLoading, success, clearError } = useSignup()
+    const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         await signup(firstname, lastname, username, email, password)
+        if (!error) {
+            router.push('/')
+        }
     }
     
     return (

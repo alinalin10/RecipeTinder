@@ -2,7 +2,7 @@
 // Ensures only logged-in users can access certain pages and redirects to login page if not
 'use client'
 import React, { useEffect, ReactNode } from 'react'
-import { useAuthContext } from '../../../hooks/useAuthContext'
+import { useAuthContext } from '../../hooks/useAuthContext'
 import { useRouter } from 'next/navigation'
 
 interface ProtectedRouteProps {
