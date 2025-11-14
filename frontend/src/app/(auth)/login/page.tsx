@@ -3,15 +3,20 @@
 import { useState, FormEvent } from 'react'
 import { useLogin } from '../../../hooks/useLogin'
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const { login, error, isLoading, success, clearError } = useLogin()
+    const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         await login(email, password)
+        if (!error) {
+            router.push('/')
+        }
     }
 
     return (
