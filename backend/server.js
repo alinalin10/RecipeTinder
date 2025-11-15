@@ -35,6 +35,7 @@ app.use((req, res, next) => {
 //routes
 app.use('/api/user', userRoutes)
 app.use('/api/userrecipes', userRecipeRoutes);
+app.use('/api/savedrecipes', userRecipeRoutes);
 app.use('/api/swipe', swipeRoutes);
 app.use('/api/recipes', recipeRoutes)
 
