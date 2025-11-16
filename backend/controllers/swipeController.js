@@ -1,4 +1,5 @@
 // controllers/recipeController.js
+const mongoose = require('mongoose');
 const SavedRecipe = require('../models/savedRecipes');
 const User = require('../models/userModel');
 
@@ -42,12 +43,9 @@ const saveRecipe = async (req, res) => {
             }
         );
 
-        console.log('Saved Recipe:', savedRecipe);
-        console.log('User before update:', await User.findById(userId));
-
         // Update the user's recipes array
         const updatedUser = await User.findByIdAndUpdate(
-            mongoose.Types.ObjectId(userId),
+            userId,
             { 
                 $addToSet: { 
                     savedRecipes: savedRecipe._id
@@ -55,10 +53,9 @@ const saveRecipe = async (req, res) => {
             },
             { new: true }
         );
-        console.log('Updated user recipes:', updatedUser.savedRecipes);
 
         
-        res.json({ success: true, savedRecipe, userRecipes: updatedUser.savedRecipes });
+        res.json({ success: true, savedRecipe, userRecipes: updatedUser });
     } catch (error) {
         // Handle duplicate key error
         if (error.code === 11000) {
