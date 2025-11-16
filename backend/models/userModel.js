@@ -40,7 +40,7 @@ const userSchema = new Schema({
     createdAt: { type: Date, default: Date.now },
 
     // Direct reference to saved recipes
-    savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'SavedRecipes' }],
+    savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'SavedRecipe' }],
 
     //embedded documents: pantry items and preferences below
     preferences: preferences,

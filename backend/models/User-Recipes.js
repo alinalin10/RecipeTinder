@@ -21,13 +21,13 @@ const userRecipes = new Schema({
   timestamps: true
 });
 
-userRecipes.set('toJSON', {
+/*userRecipes.set('toJSON', {
   virtuals: true,          // include any virtual fields you define
   versionKey: false,       // remove the "__v" field (used by MongoDB for versioning)
   transform: function (doc, ret) {
     ret.id = ret._id;      // copy the _id value into a new field "id"
     delete ret._id;        // remove the original _id so frontend doesn’t see it
   }
-});
+});*/
 
 module.exports = model('UserRecipes', userRecipes);

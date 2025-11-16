@@ -1,5 +1,6 @@
 // controllers/recipeController.js
 const SavedRecipe = require('../models/savedRecipes');
+const User = require('../models/userModel');
 
 // Save/Update a recipe
 const saveRecipe = async (req, res) => {
@@ -7,7 +8,7 @@ const saveRecipe = async (req, res) => {
         const { recipeId, recipeType, action, recipeTitle } = req.body;
         const userId = req.user.id;
         
-        // Validate enum values (schema doesn't enforce these)
+        // Validate senum values (schema doesn't enforce these)
         if (recipeType && !['spoonacular', 'userMade'].includes(recipeType)) {
             return res.status(400).json({ 
                 error: 'recipeType must be either "spoonacular" or "userMade"' 
@@ -40,8 +41,24 @@ const saveRecipe = async (req, res) => {
                 setDefaultsOnInsert: true
             }
         );
+
+        console.log('Saved Recipe:', savedRecipe);
+        console.log('User before update:', await User.findById(userId));
+
+        // Update the user's recipes array
+        const updatedUser = await User.findByIdAndUpdate(
+            mongoose.Types.ObjectId(userId),
+            { 
+                $addToSet: { 
+                    savedRecipes: savedRecipe._id
+                } 
+            },
+            { new: true }
+        );
+        console.log('Updated user recipes:', updatedUser.savedRecipes);
+
         
-        res.json({ success: true, savedRecipe });
+        res.json({ success: true, savedRecipe, userRecipes: updatedUser.savedRecipes });
     } catch (error) {
         // Handle duplicate key error
         if (error.code === 11000) {

@@ -87,8 +87,10 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         if (prevCards.length === 0) return prevCards;
 
         const topCard = prevCards[prevCards.length - 1];
-        const recipeId = topCard._id || topCard.id;
+        const recipeId = topCard._id || topCard.id;;
         const recipeTitle = topCard.name || topCard.title;
+
+        console.log('Saving recipeId:', recipeId, 'title:', recipeTitle);
 
         if (recipeId && recipeTitle) {
             saveRecipe(
