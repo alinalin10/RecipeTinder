@@ -87,7 +87,7 @@ const Login = () => {
 
                     {/* Sign up link */}
                     <div className="text-center mt-6">
-                        <span className="text-gray-600">Don't have an account? </span>
+                        <span className="text-gray-600">Don&apos;t have an account? </span>
                         <Link href="/signup" className="text-[#ff6b6b] hover:text-[#ff5252] font-medium transition-colors">
                             Sign Up
                         </Link>
