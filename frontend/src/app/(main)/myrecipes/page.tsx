@@ -5,23 +5,12 @@ import { useSavedRecipesContext } from '@/hooks/useSavedRecipesContext';
 export default function MyRecipesPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('all');
-  const { savedRecipes, setSavedRecipes } = useSavedRecipesContext();
+  const { savedRecipes } = useSavedRecipesContext();
 
   useEffect(() => {
-    async function fetchSavedRecipes() {
-      try {
-        const res = await fetch('/api/savedRecipes'); // your backend route
-        const data = await res.json();
-        if (data.success) {
-          setSavedRecipes(data.recipes);
-        }
-      } catch (err) {
-        console.error('Error fetching saved recipes:', err);
-      }
-    }
+    console.log("Saved recipes updated in MyRecipesPage:", savedRecipes);
+  }, [savedRecipes]);
 
-    fetchSavedRecipes();
-  }, []);
 
   const [likedRecipes, setLikedRecipes] = useState<Set<string | number>>(new Set());
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState<Set<string | number>>(new Set());
@@ -46,7 +35,7 @@ export default function MyRecipesPage() {
 
   // Filter recipes
   const filteredRecipes = (savedRecipes ?? [])
-    .filter(recipe => recipe.title.toLowerCase().includes(search.toLowerCase()))
+    .filter(recipe => recipe.recipeTitle.toLowerCase().includes(search.toLowerCase()))
     .filter(recipe => {
       if (sortBy === 'bookmarked') return bookmarkedRecipes.has(recipe._id);
       return true;
@@ -54,7 +43,7 @@ export default function MyRecipesPage() {
 
   // Sort recipes
   const sortedRecipes = [...filteredRecipes].sort((a, b) => {
-    if (sortBy === 'name') return a.title.localeCompare(b.title);
+    if (sortBy === 'name') return a.recipeTitle.localeCompare(b.recipeTitle);
     return 0;
   });
 
@@ -106,7 +95,7 @@ export default function MyRecipesPage() {
               <div className="relative">
                 <img
                   src={recipe.image}
-                  alt={recipe.title}
+                  alt={recipe.recipeTitle}
                   className="w-full h-64 object-cover rounded-lg mb-4"
                 />
                 <button
@@ -118,7 +107,7 @@ export default function MyRecipesPage() {
                 </button>
               </div>
 
-              <h2 className="text-lg font-semibold mb-3 text-black">{recipe.title}</h2>
+              <h2 className="text-lg font-semibold mb-3 text-black">{recipe.recipeTitle}</h2>
 
               <div className="flex justify-around pt-8 mt-4">
                 <button

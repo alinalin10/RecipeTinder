@@ -3,6 +3,7 @@ import { createContext, useReducer, useEffect, ReactNode, Dispatch } from 'react
 
 // Define the shape of the user object
 export interface User {
+    userId: string;
     email: string;
     token: string;
     // Add other user properties as needed
