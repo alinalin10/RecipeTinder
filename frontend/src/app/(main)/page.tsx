@@ -95,7 +95,6 @@ export default function Home() {
     // Transform user-created recipes
     const userCards: CardData[] = (userRecipes && userRecipes.length > 0)
       ? userRecipes.map((recipe: UserRecipe) => ({
-          id: recipe._id,
           _id: recipe._id,
           image: recipe.image,
           title: recipe.title,

@@ -1,12 +1,27 @@
 'use client';
-import { useState } from 'react';
-import { useRecipesInfoContext } from '../../../hooks/useRecipesContext';
+import { useState, useEffect } from 'react';
 import { useSavedRecipesContext } from '@/hooks/useSavedRecipesContext';
 
 export default function MyRecipesPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('all');
-  const { savedRecipes = [] } = useSavedRecipesContext() || {};
+  const { savedRecipes, setSavedRecipes } = useSavedRecipesContext();
+
+  useEffect(() => {
+    async function fetchSavedRecipes() {
+      try {
+        const res = await fetch('/api/savedRecipes'); // your backend route
+        const data = await res.json();
+        if (data.success) {
+          setSavedRecipes(data.recipes);
+        }
+      } catch (err) {
+        console.error('Error fetching saved recipes:', err);
+      }
+    }
+
+    fetchSavedRecipes();
+  }, []);
 
   const [likedRecipes, setLikedRecipes] = useState<Set<string | number>>(new Set());
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState<Set<string | number>>(new Set());
