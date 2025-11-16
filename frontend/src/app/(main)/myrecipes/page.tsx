@@ -1,11 +1,16 @@
 'use client';
-import { useState } from 'react';
-import { useRecipes } from '../../../../hooks/RecipesContext';
+import { useState, useEffect } from 'react';
+import { useSavedRecipesContext } from '@/hooks/useSavedRecipesContext';
 
 export default function MyRecipesPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('all');
-  const { recipes } = useRecipes();
+  const { savedRecipes } = useSavedRecipesContext();
+
+  useEffect(() => {
+    console.log("Saved recipes updated in MyRecipesPage:", savedRecipes);
+  }, [savedRecipes]);
+
 
   const [likedRecipes, setLikedRecipes] = useState<Set<string | number>>(new Set());
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState<Set<string | number>>(new Set());
@@ -29,16 +34,16 @@ export default function MyRecipesPage() {
   };
 
   // Filter recipes
-  const filteredRecipes = recipes
-    .filter(recipe => recipe.title.toLowerCase().includes(search.toLowerCase()))
+  const filteredRecipes = (savedRecipes ?? [])
+    .filter(recipe => recipe.recipeTitle.toLowerCase().includes(search.toLowerCase()))
     .filter(recipe => {
-      if (sortBy === 'bookmarked') return bookmarkedRecipes.has(recipe.id);
+      if (sortBy === 'bookmarked') return bookmarkedRecipes.has(recipe._id);
       return true;
     });
 
   // Sort recipes
   const sortedRecipes = [...filteredRecipes].sort((a, b) => {
-    if (sortBy === 'name') return a.title.localeCompare(b.title);
+    if (sortBy === 'name') return a.recipeTitle.localeCompare(b.recipeTitle);
     return 0;
   });
 
@@ -83,26 +88,26 @@ export default function MyRecipesPage() {
         <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-3">
           {sortedRecipes.map(recipe => (
             <div
-              key={recipe.id}
+              key={recipe._id}
               className="rounded-xl p-4 shadow hover:shadow-lg transition-shadow"
               style={{ backgroundColor: '#f5f1e8' }}
             >
               <div className="relative">
                 <img
                   src={recipe.image}
-                  alt={recipe.title}
+                  alt={recipe.recipeTitle}
                   className="w-full h-64 object-cover rounded-lg mb-4"
                 />
                 <button
-                  onClick={() => toggleLike(recipe.id)}
+                  onClick={() => toggleLike(recipe._id)}
                   className="absolute bottom-2 left-2 hover:text-pink-600 transition-colors"
-                  aria-label={likedRecipes.has(recipe.id) ? 'Unlike recipe' : 'Like recipe'}
+                  aria-label={likedRecipes.has(recipe._id) ? 'Unlike recipe' : 'Like recipe'}
                 >
                   <img src="/heart.png" alt="Like" className="w-6 h-6" />
                 </button>
               </div>
 
-              <h2 className="text-lg font-semibold mb-3 text-black">{recipe.title}</h2>
+              <h2 className="text-lg font-semibold mb-3 text-black">{recipe.recipeTitle}</h2>
 
               <div className="flex justify-around pt-8 mt-4">
                 <button
@@ -113,17 +118,17 @@ export default function MyRecipesPage() {
                   <img src="/cart.png" alt="Cart" className="w-6 h-6" />
                 </button>
                 <button
-                  onClick={() => toggleBookmarked(recipe.id)}
+                  onClick={() => toggleBookmarked(recipe._id)}
                   className="hover:text-pink-600 transition-colors"
-                  aria-label={bookmarkedRecipes.has(recipe.id) ? 'Remove bookmark' : 'Bookmark recipe'}
+                  aria-label={bookmarkedRecipes.has(recipe._id) ? 'Remove bookmark' : 'Bookmark recipe'}
                 >
                   <img
                     src="/bookmark.png"
                     alt="Bookmark"
                     className="w-6 h-6"
                     style={{
-                      filter: bookmarkedRecipes.has(recipe.id) ? 'none' : 'grayscale(100%)',
-                      opacity: bookmarkedRecipes.has(recipe.id) ? 1 : 0.5
+                      filter: bookmarkedRecipes.has(recipe._id) ? 'none' : 'grayscale(100%)',
+                      opacity: bookmarkedRecipes.has(recipe._id) ? 1 : 0.5
                     }}
                   />
                 </button>

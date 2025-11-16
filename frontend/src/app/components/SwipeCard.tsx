@@ -23,7 +23,7 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
 
 
 
-      const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
+      const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, image: string) => {
         // Get the user object from localStorage and extract the token
         const userJson = localStorage.getItem('user');
         const token = userJson ? JSON.parse(userJson).token : null;
@@ -49,15 +49,15 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
                 recipeId: recipeId,
                 recipeType: recipeType,
                 recipeTitle: recipeTitle,
-                action: action
+                action: action,
+                image: image
             })
         })
 
         if (!response.ok) {
             throw new Error('Failed to save recipe');
         } else {
-            const data = await response.json();
-            console.log('Recipe saved:', data);
+            return await response.json();
         }
     }
 
@@ -78,29 +78,36 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         setCards(prevCards => prevCards.slice(0, -1));
     };
 
-    const likeTopCard = () => {
+    const likeTopCard = async () => {
         if (!hasAuthToken()) {
             router.push('/login')
             return
         }
-        setCards(prevCards => {
-        if (prevCards.length === 0) return prevCards;
 
-        const topCard = prevCards[prevCards.length - 1];
+        setCards(prevCards => {
+            if (prevCards.length === 0) return prevCards;
+            return prevCards.slice(0, -1); // remove top card immediately
+        });
+
+        const topCard = cards[cards.length - 1];
+        if (!topCard) return;
         const recipeId = topCard._id || topCard.id;
         const recipeTitle = topCard.name || topCard.title;
+        const image = topCard.image;
 
         if (recipeId && recipeTitle) {
-            saveRecipe(
-            recipeId,
-            topCard.recipeType || 'userMade',
-            recipeTitle,
-            'liked'
-            );
+            try {
+                const saved = await saveRecipe(
+                    recipeId,
+                    topCard.recipeType || 'userMade',
+                    recipeTitle,
+                    'liked',
+                    image
+                );
+            } catch (err) {
+                console.error("Error saving recipe:", err);
+            }
         }
-
-        return prevCards.slice(0, -1);
-        });
     };
     return (
         <div className={styles['card-stack']}>

@@ -118,4 +118,21 @@ const getUserPreferences = async (req, res) => {
     }
 };
 
-module.exports = {signupUser, loginUser, updateUserPreferences, getUserPreferences }
+//get user preferences
+const getUserSavedRecipes = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findById(userId).populate('savedRecipes').select('savedRecipes');
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ savedRecipes: user.savedRecipes });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = {signupUser, loginUser, updateUserPreferences, getUserPreferences, getUserSavedRecipes }

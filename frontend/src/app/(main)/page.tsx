@@ -80,8 +80,8 @@ export default function Home() {
     const spoonacularCards: CardData[] = (recipes && recipes.length > 0)
       ? recipes.map((recipe) => ({
           id: recipe.id,
-          url: recipe.image,
-          name: recipe.title,
+          image: recipe.image,
+          title: recipe.title,
           user: "Spoonacular",
           date: recipe.readyInMinutes
             ? `Ready in ${recipe.readyInMinutes} min`
