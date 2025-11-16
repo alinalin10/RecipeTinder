@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSavedRecipesContext } from '@/hooks/useSavedRecipesContext';
 
 export default function MyRecipesPage() {
@@ -8,41 +9,23 @@ export default function MyRecipesPage() {
   const { savedRecipes } = useSavedRecipesContext();
 
   useEffect(() => {
-    console.log("Saved recipes updated in MyRecipesPage:", savedRecipes);
+    console.log('Saved recipes updated in MyRecipesPage:', savedRecipes);
   }, [savedRecipes]);
 
-
-  const [likedRecipes, setLikedRecipes] = useState<Set<string | number>>(new Set());
-  const [bookmarkedRecipes, setBookmarkedRecipes] = useState<Set<string | number>>(new Set());
-
-  // like
-  const toggleLike = (id: string | number) => {
-    setLikedRecipes(prev => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
-  };
-
-  // bookmark
-  const toggleBookmarked = (id: string | number) => {
-    setBookmarkedRecipes(prev => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
-  };
+  const normalizeId = (id: string | number) => String(id);
 
   // Filter recipes
   const filteredRecipes = (savedRecipes ?? [])
-    .filter(recipe => recipe.recipeTitle.toLowerCase().includes(search.toLowerCase()))
-    .filter(recipe => {
-      if (sortBy === 'bookmarked') return bookmarkedRecipes.has(recipe._id);
+    .filter((recipe: any) => recipe.recipeTitle.toLowerCase().includes(search.toLowerCase()))
+    .filter((recipe: any) => {
+      if (sortBy === 'bookmarked') {
+        return true;
+      }
       return true;
     });
 
   // Sort recipes
-  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
+  const sortedRecipes = [...filteredRecipes].sort((a: any, b: any) => {
     if (sortBy === 'name') return a.recipeTitle.localeCompare(b.recipeTitle);
     return 0;
   });
@@ -51,9 +34,7 @@ export default function MyRecipesPage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto p-8">
         <h1 className="text-4xl font-bold mb-2 text-black">My Recipes</h1>
-        <p className="text-gray-500 mb-8">
-          All Your Favorite Dishes, Saved In One Place
-        </p>
+        <p className="text-gray-500 mb-8">All Your Favorite Dishes, Saved In One Place</p>
 
         <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
           <div className="relative">
@@ -86,55 +67,51 @@ export default function MyRecipesPage() {
 
         {/* Recipes Grid */}
         <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-3">
-          {sortedRecipes.map(recipe => (
-            <div
-              key={recipe._id}
-              className="rounded-xl p-4 shadow hover:shadow-lg transition-shadow"
-              style={{ backgroundColor: '#f5f1e8' }}
-            >
-              <div className="relative">
+          {sortedRecipes.map((recipe: any) => {
+            const idForUI = normalizeId(recipe._id);
+            return (
+              <div
+                key={idForUI}
+                className="rounded-xl p-4 shadow hover:shadow-lg transition-shadow"
+                style={{ backgroundColor: '#FAFAF5' }}
+              >
                 <img
                   src={recipe.image}
                   alt={recipe.recipeTitle}
                   className="w-full h-64 object-cover rounded-lg mb-4"
                 />
-                <button
-                  onClick={() => toggleLike(recipe._id)}
-                  className="absolute bottom-2 left-2 hover:text-pink-600 transition-colors"
-                  aria-label={likedRecipes.has(recipe._id) ? 'Unlike recipe' : 'Like recipe'}
-                >
-                  <img src="/heart.png" alt="Like" className="w-6 h-6" />
-                </button>
-              </div>
 
-              <h2 className="text-lg font-semibold mb-3 text-black">{recipe.recipeTitle}</h2>
+                <h2 className="text-lg font-semibold mb-3 text-black">{recipe.recipeTitle}</h2>
 
-              <div className="flex justify-around pt-8 mt-4">
-                <button
-                  onClick={() => alert('List of Ingredients:')}
-                  className="hover:text-pink-600 transition-colors"
-                  aria-label="Show ingredients"
-                >
-                  <img src="/cart.png" alt="Cart" className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => toggleBookmarked(recipe._id)}
-                  className="hover:text-pink-600 transition-colors"
-                  aria-label={bookmarkedRecipes.has(recipe._id) ? 'Remove bookmark' : 'Bookmark recipe'}
-                >
-                  <img
-                    src="/bookmark.png"
-                    alt="Bookmark"
-                    className="w-6 h-6"
-                    style={{
-                      filter: bookmarkedRecipes.has(recipe._id) ? 'none' : 'grayscale(100%)',
-                      opacity: bookmarkedRecipes.has(recipe._id) ? 1 : 0.5
-                    }}
-                  />
-                </button>
+
+                {/* View Recipe button - links to recipe detail page */}
+                <div className="mt-4">
+                  {recipe.recipeType === 'spoonacular' ? (
+                    <a
+                      href={`https://spoonacular.com/recipes/${encodeURIComponent(String(recipe.recipeId))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block px-4 py-2 text-white rounded hover:brightness-90 transition-colors"
+                      style={{ backgroundColor: '#F95968' }}
+                    >
+                      View Recipe ↗
+                    </a>
+                  ) : (
+                    <Link
+                      href={`/recipe-description/${encodeURIComponent(String(recipe.recipeId))}`}
+                      className="inline-block px-4 py-2 text-white rounded hover:brightness-90 transition-colors"
+                      style={{ backgroundColor: '#F95968' }}
+                    >
+                      View Recipe
+                    </Link>
+                  )}
+                </div>
+                {/* <div className="pt-4 mt-2 text-sm text-gray-700">
+                  <p className="mt-1">Saved at: {new Date(recipe.savedAt || recipe.createdAt || Date.now()).toLocaleString()}</p>
+                </div> */}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
