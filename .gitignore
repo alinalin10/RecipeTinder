@@ -13,3 +13,4 @@ dist/
 # Environment variables
 .env
 backend/.env
+.vercel
