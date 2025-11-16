@@ -97,26 +97,32 @@
 }
 
 .shadow-bullets {
-    list-style: none;
-    padding-left: 20px;
+  /* keep natural spacing, or adjust as needed */
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+  list-style-position: outside;
 }
 
+.shadow-bullets li::marker {
+  color: #F95968;
+  font-size: 1.6rem; /* increase this to make the bullet bigger (try 1.2rem, 1.6rem, 2rem) */
+  line-height: 1;    /* keep marker aligned */
+}
+
+/* fallback for browsers without ::marker */
 .shadow-bullets li {
-    position: relative;
-    margin-bottom: 10px;
+  list-style: none;
+  position: relative;
+  padding-left: 1.6rem;
 }
-
-.shadow-bullets li:before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-
-    border-radius: 50%;
-    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+.shadow-bullets li::before {
+  content: '•';
+  color: #F95968;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 1.6rem; /* match ::marker size */
+  line-height: 1;
 }
 
 .instructions-section ol {
