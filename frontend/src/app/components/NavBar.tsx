@@ -27,7 +27,7 @@ export default function NavBar() {
     <div className="nav-right">
     <div className="nav-actions"></div>
       <div className="links">
-        <Link href="/about">About</Link>
+        {/* <Link href="/about">About</Link> */}
         <Link href="/make-recipe">Share Recipes</Link>
         <Link href="/myrecipes">My Recipes</Link>
         {!user ? (
