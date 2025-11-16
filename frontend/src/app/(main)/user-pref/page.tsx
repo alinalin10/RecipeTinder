@@ -7,7 +7,7 @@ import UserPref3 from '@/app/components/UserPref3'
 const page = () => {
   return (
     <ProtectedRoute>
-      <div className='bg-white'>
+      <div className="bg-white mx-auto my-8 max-w-5xl px-4 sm:px-6 lg:px-8 py-6 rounded-lg">
           <UserPref />
           <UserPref2 />
           <UserPref3 />
