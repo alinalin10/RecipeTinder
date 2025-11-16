@@ -13,6 +13,7 @@ export interface SavedRecipe {
   savedAt: string;
   createdAt: string;
   updatedAt: string;
+  image: string;
 }
 
 interface SavedRecipesContextType {
