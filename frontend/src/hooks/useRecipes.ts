@@ -43,7 +43,7 @@ export interface Recipe {
             percentCarbs: number;
         };
     };
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any; // Allow additional properties
 }
 

@@ -16,7 +16,9 @@ export default function MyRecipesPage() {
 
   // Filter recipes
   const filteredRecipes = (savedRecipes ?? [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((recipe: any) => recipe.recipeTitle.toLowerCase().includes(search.toLowerCase()))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((recipe: any) => {
       if (sortBy === 'bookmarked') {
         return true;
@@ -25,10 +27,12 @@ export default function MyRecipesPage() {
     });
 
   // Sort recipes
-  const sortedRecipes = [...filteredRecipes].sort((a: any, b: any) => {
-    if (sortBy === 'name') return a.recipeTitle.localeCompare(b.recipeTitle);
-    return 0;
-  });
+  const sortedRecipes = [...filteredRecipes]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .sort((a: any, b: any) => {
+      if (sortBy === 'name') return a.recipeTitle.localeCompare(b.recipeTitle);
+      return 0;
+    });
 
   return (
     <div className="min-h-screen bg-white">

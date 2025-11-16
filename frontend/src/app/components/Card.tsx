@@ -18,6 +18,7 @@ export interface CardData {
     time?: string;
     recipe?: string;
     recipeType?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fullRecipeData?: any;
 }
 
@@ -38,6 +39,7 @@ interface CardProps {
     recipe?: string;
     recipeType?: string;
     index: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fullRecipeData?: any;
 }
 
@@ -86,7 +88,7 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
                 action: action
             })
         })
-
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let data: any = {}
         try {
             data = await response.json()

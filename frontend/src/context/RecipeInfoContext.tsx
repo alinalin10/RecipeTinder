@@ -3,6 +3,7 @@ import { createContext, useState, useReducer, useEffect, ReactNode } from 'react
 
 export const RecipesInfoContext = createContext(null)
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const recipesReducer = (state: { recipes: any[] }, action: { type: string; payload: any }) => {
     switch (action.type) {
         case 'SET_RECIPES':

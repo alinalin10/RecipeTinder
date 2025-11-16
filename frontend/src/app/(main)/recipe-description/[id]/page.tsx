@@ -9,6 +9,7 @@ const RecipeDescription = () => {
     const { recipes } = useRecipesInfoContext();
 
     // Find recipe by either _id or id field
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const recipe = recipes?.find((r: any) => r._id === id || r.id === id);
 
     if (!recipe) {

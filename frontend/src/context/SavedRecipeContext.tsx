@@ -18,6 +18,7 @@ export interface SavedRecipe {
 
 interface SavedRecipesContextType {
   savedRecipes: SavedRecipe[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch: React.Dispatch<any>;
 }
 

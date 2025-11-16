@@ -22,6 +22,7 @@ const UserPref = () => {
         setPreview(null)
         setIsEditing(false)
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const imageChange = (e: any) => {
         const file = e.target.files[0];
         if (file) {
