@@ -6,7 +6,8 @@ const User = require('../models/userModel');
 // Save/Update a recipe
 const saveRecipe = async (req, res) => {
     try {
-        const { recipeId, recipeType, action, recipeTitle } = req.body;
+        const { recipeId, recipeType, action, recipeTitle, image } = req.body;
+        console.log('Request body:', req.body);
         const userId = req.user.id;
         
         // Validate senum values (schema doesn't enforce these)
@@ -34,7 +35,8 @@ const saveRecipe = async (req, res) => {
                 recipeType,
                 action,
                 recipeTitle,
-                savedAt: new Date()
+                savedAt: new Date(),
+                image
             },
             { 
                 upsert: true, 
@@ -42,6 +44,17 @@ const saveRecipe = async (req, res) => {
                 setDefaultsOnInsert: true
             }
         );
+
+        console.log('Saving recipe to DB:', {
+            UserId: userId,
+            recipeId,
+            recipeType,
+            action,
+            recipeTitle,
+            savedAt: new Date(),
+            image
+        });
+
 
         // Update the user's recipes array
         const updatedUser = await User.findByIdAndUpdate(
