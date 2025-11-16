@@ -21,29 +21,34 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         }
     }
 
+    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
+        // token is stored inside localStorage.user as a JSON string { token: '...', ... }
+        let token: string | null = null
+        try {
+            const userStr = localStorage.getItem('user')
+            if (userStr) {
+                const userObj = JSON.parse(userStr)
+                token = userObj?.token || null
+            }
+        } catch (e) {
+            console.warn('Failed to parse stored user object', e)
+        }
 
-
-      const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
-        // Get the user object from localStorage and extract the token
-        const userJson = localStorage.getItem('user');
-        const token = userJson ? JSON.parse(userJson).token : null;
+        console.log('Attempting to save recipe:', { recipeId, recipeType, recipeTitle, action })
+        console.log('Token exists:', !!token)
 
         if (!token) {
-            // no token — do not call backend
-            console.warn('saveRecipe called without token')
+            // If user is not authenticated, send them to signup/login instead of attempting the API call
+            console.info('User not authenticated — redirecting to /signup')
+            router.push('/signup')
             return
         }
 
-
-        console.log('Token value:', token); // ADD THIS
-        console.log('Token length:', token?.length); // ADD THIS
-
-        console.log('Token exists:', !!token); //Debugging line
         const response = await fetch('http://localhost:4000/api/swipe/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`// Added authorization header
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
                 recipeId: recipeId,
@@ -53,12 +58,20 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
             })
         })
 
-        if (!response.ok) {
-            throw new Error('Failed to save recipe');
-        } else {
-            const data = await response.json();
-            console.log('Recipe saved:', data);
+        let data: any = {}
+        try {
+            data = await response.json()
+        } catch (err) {
+            // response had no JSON body
+            data = {}
         }
+
+        if (!response.ok) {
+            console.error('Failed to save recipe:', response.status, data)
+            throw new Error(`Failed to save recipe: ${data.error || response.statusText}`)
+        }
+
+        console.log('Recipe saved successfully:', data)
     }
 
     useEffect(() => {
@@ -78,7 +91,7 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         setCards(prevCards => prevCards.slice(0, -1));
     };
 
-    const likeTopCard = () => {
+    const likeTopCard = async () => {
         if (!hasAuthToken()) {
             router.push('/login')
             return
@@ -87,13 +100,15 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         if (prevCards.length === 0) return prevCards;
 
         const topCard = prevCards[prevCards.length - 1];
-        const recipeId = topCard._id || topCard.id;
+        const recipeId = topCard._id || topCard.id || topCard.fullRecipeData?.id;
         const recipeTitle = topCard.name || topCard.title;
-
+        const recipeType = topCard.recipeType || 'userMade';
+        console.log('Recipe details:', { recipeId, recipeTitle, recipeType }); // Add this
+        
         if (recipeId && recipeTitle) {
             saveRecipe(
             recipeId,
-            topCard.recipeType || 'userMade',
+            recipeType,
             recipeTitle,
             'liked'
             );

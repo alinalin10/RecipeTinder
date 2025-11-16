@@ -9,6 +9,7 @@ const userRoutes = require('./routes/user')
 const userRecipeRoutes = require('./routes/User-Recipe-Routes');
 const swipeRoutes = require('./routes/swipe');
 const recipeRoutes = require('./routes/recipes')
+const spoonacularRoutes = require('./routes/spoonacular');
 
 /*debug for .env secret JWT signature not being held secret
 
@@ -37,6 +38,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/userrecipes', userRecipeRoutes);
 app.use('/api/swipe', swipeRoutes);
 app.use('/api/recipes', recipeRoutes)
+app.use('/api/spoonacular', spoonacularRoutes);
 
 // Basic test route
 app.get('/', (req, res) => {

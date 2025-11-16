@@ -43,6 +43,14 @@ interface CardProps {
 
 // Creates card component (id = place on stack, url/image = image, name/title = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
 const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating, difficulty, date, time, recipe, recipeType = 'userMade', index, fullRecipeData }: CardProps) => {
+    console.log('Card rendered with:', { 
+        id, 
+        _id, 
+        idType: typeof id, 
+        _idType: typeof _id,
+        match: id || _id 
+    });
+    console.log('📋 Card props:', { id, _id, name, title, recipeType, fullRecipeData }); // Add this line
     // As card moves left and right it rotates sideways and also starts to disappear
     const x = useMotionValue(0);
     const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0])
@@ -105,23 +113,31 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
 
     // Front card disappears when dragged and let go
     const handleDragEnd = async () => {
+        console.log('Current cards length:', cards.length);
         const currentX = x.get();
+        console.log('🔥 DRAG ENDED! Position:', currentX);
         if (Math.abs(currentX) > 150) {
+            console.log('✅ Swipe threshold reached!');
             const direction = currentX > 0 ? 1 : -1;
+            console.log('Direction:', direction > 0 ? '👍 RIGHT (LIKE)' : '👎 LEFT (DISLIKE)'); // Add this
 
             animate(x, direction * 600, {
                 type: 'spring',
-                stiffness: 200,
-                damping: 25,
+                stiffness: 500,
+                damping: 15,
                 onComplete: () => {
-                    setCards((prev: CardData[]) => prev.filter((v: CardData) => (v.id || v._id) !== (id || _id)));
+                    console.log('Trying to remove card with id:', id || _id);
+                    setCards((prev: CardData[]) => prev.slice(0, -1));
                 }
             });
 
             if (direction === 1) {
-                const recipeId = id || _id;
+                console.log('🎯 Right swipe detected, attempting to save...'); // Add this
+                const recipeId = id || _id || fullRecipeData?.id;
                 const recipeTitle = name || title;
+                console.log('Recipe details:', { recipeId, recipeTitle, recipeType }); // Add this
                 if (recipeId && recipeTitle) {
+                    console.log('✅ Recipe ID and title exist, calling saveRecipe...'); // Add this
                     try {
                         await saveRecipe(recipeId, recipeType, recipeTitle, 'liked');
                     } catch (err) {
@@ -129,13 +145,17 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
                         console.error('saveRecipe failed', err);
                     }
                 }
+                else {
+                    console.log('❌ Missing recipe ID or title'); // Add this
+                }
             }
         } else {
+            console.log('❌ Not far enough, returning to center'); // Add this
             animate(x, 0, { type: 'spring', stiffness: 300, damping: 25 });
         }
     }
 
-    const imageUrl = url || image;
+    const imageUrl = url || image || 'https://img.freepik.com/premium-photo/cutting-board-with-knife-knife-it_865967-240613.jpg';
     const recipeName = name || title;
     const cardId = id || _id;
 
@@ -151,7 +171,7 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
         className={styles['card']}
         style={{
             x,
-            opacity: isTopCard ? opacity : 0,
+            opacity: isTopCard ? opacity : 1,
             rotate,
             zIndex: index,
             pointerEvents: isTopCard ? 'auto' : 'none'

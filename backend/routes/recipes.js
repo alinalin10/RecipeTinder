@@ -7,6 +7,8 @@ const {
     getSimilarRecipes,
     getRecipesByIngredients
 } = require('../services/spoonacularService');
+const mongoose = require('mongoose');
+const UserRecipes = mongoose.model('UserRecipes');
 
 // GET /api/recipes/random - Get random recipes
 // Query params: number (default 10), tags (optional, comma-separated)
@@ -41,6 +43,19 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        
+        // First, try to find in local database (user-made recipes)
+        try {
+            const userRecipe = await UserRecipes.findById(id);
+            if (userRecipe) {
+                return res.status(200).json({ success: true, data: userRecipe });
+            }
+        } catch (err) {
+            // If it's not a valid MongoDB ObjectId, it might be a Spoonacular ID
+            console.log('Not a MongoDB ID, trying Spoonacular...');
+        }
+        
+        // If not found locally, try Spoonacular
         const recipe = await getRecipeById(id);
         res.status(200).json({ success: true, data: recipe });
     } catch (error) {

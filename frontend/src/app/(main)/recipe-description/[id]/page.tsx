@@ -1,17 +1,91 @@
 'use client';
 import { useParams } from 'next/navigation';
-import React from 'react'
-import { useRecipesInfoContext } from '../../../../hooks/useRecipesContext';
+import React, { useEffect, useState } from 'react';
 import styles from './recipe-description.module.css';
 
 const RecipeDescription = () => {
     const { id } = useParams();
-    const { recipes } = useRecipesInfoContext();
+    const [recipe, setRecipe] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-    // Find recipe by either _id or id field
-    const recipe = recipes?.find((r: any) => r._id === id || r.id === id);
+    useEffect(() => {
+        const fetchRecipe = async () => {
+            try {
+                const token = JSON.parse(localStorage.getItem('user') || '{}')?.token;
+                
+                // Check if ID is a number (Spoonacular) or MongoDB ObjectId (user recipe)
+                const isSpoonacular = !isNaN(Number(id));
+                
+                let recipeData;
+                
+                if (isSpoonacular) {
+                    // Fetch from YOUR backend (which calls Spoonacular)
+                    const response = await fetch(`http://localhost:4000/api/spoonacular/${id}`);
+                    
+                    if (!response.ok) throw new Error('Spoonacular recipe not found');
+                    
+                    const result = await response.json();
+                    recipeData = result.data;
+                    
+                    // Transform Spoonacular data to match your format
+                    setRecipe({
+                        id: recipeData.id,
+                        title: recipeData.title,
+                        image: recipeData.image,
+                        user: recipeData.sourceName || 'Spoonacular',
+                        servings: recipeData.servings,
+                        prepTime: recipeData.preparationMinutes,
+                        cookTime: recipeData.cookingMinutes,
+                        description: recipeData.summary?.replace(/<[^>]*>/g, ''), // Remove HTML tags
+                        ingredients: recipeData.extendedIngredients?.map((ing: any) => ing.original) || [],
+                        steps: recipeData.analyzedInstructions?.[0]?.steps?.map((step: any) => step.step) || [],
+                        cuisine: recipeData.cuisines?.[0],
+                        course: recipeData.dishTypes?.[0],
+                        difficulty: 'N/A',
+                        calories: recipeData.nutrition?.nutrients?.find((n: any) => n.name === 'Calories')?.amount || 'N/A'
+                    });
+                } else {
+                    // Fetch user-made recipe from your backend
+                    const response = await fetch(
+                        `http://localhost:4000/api/recipes/${id}`,
+                        { headers: { 'Authorization': `Bearer ${token}` } }
+                    );
 
-    if (!recipe) {
+                    if (!response.ok) throw new Error('Recipe not found');
+
+                    const data = await response.json();
+                    setRecipe(data.data);
+                }
+                
+                setLoading(false);
+            } catch (err) {
+                console.error('Failed to fetch recipe:', err);
+                setError(true);
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchRecipe();
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                fontSize: '18px'
+            }}>
+                Loading recipe...
+            </div>
+        );
+    }
+
+    if (error || !recipe) {
         return (
             <div style={{
                 display: 'flex',
@@ -25,11 +99,9 @@ const RecipeDescription = () => {
                 textAlign: 'center'
             }}>
                 <div style={{ fontSize: '60px', marginBottom: '20px' }}>🍳</div>
-                <p style={{ marginBottom: '10px', fontSize: '20px' }}>Recipe not found in your saved recipes</p>
+                <p style={{ marginBottom: '10px', fontSize: '20px' }}>Recipe not found</p>
                 <p style={{ fontSize: '14px', color: '#999' }}>
-                    This recipe may be from an external source.
-                    <br />
-                    Try swiping right to save it, or go back to browse more recipes.
+                    This recipe may not exist or you may not have access to it.
                 </p>
             </div>
         );
@@ -38,7 +110,11 @@ const RecipeDescription = () => {
     return (
         <div className={styles['recipe_description_page']}>
             <div className={styles['picture']}>
-                <img src={recipe.image} alt={recipe.title} className={styles['image']} />
+                <img 
+                    src={recipe.image || 'https://images.unsplash.com/photo-1556910110-a5a63dfd393c?w=800'} 
+                    alt={recipe.title} 
+                    className={styles['image']} 
+                />
             </div>
 
             <h1 className={styles['food_name']}>{recipe.title}</h1>
