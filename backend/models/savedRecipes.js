@@ -9,7 +9,9 @@ const savedRecipesSchema = new Schema({
     savedAt: {type: Date, default: Date.now},
     
     // Store title here for easy sorting (denormalization for performance)
-    recipeTitle: {type: String, required: true}
+    recipeTitle: {type: String, required: true},
+
+    image: {type: String}
 }, {
     timestamps: true  // Adds createdAt and updatedAt automatically
 });
