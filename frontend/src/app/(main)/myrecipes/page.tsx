@@ -71,6 +71,7 @@ export default function MyRecipesPage() {
 
         {/* Recipes Grid */}
         <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-3">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {sortedRecipes.map((recipe: any) => {
             const idForUI = normalizeId(recipe._id);
             return (
