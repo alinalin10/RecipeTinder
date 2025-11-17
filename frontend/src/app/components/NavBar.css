@@ -1,23 +1,30 @@
 
 nav {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  padding: 14px 28px;
   background: #FFFFFF;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e5e5e5;
   gap: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
 
 /* Left Logo */
 .logo {
   display: flex;
   align-items: center;
-  font-weight: bold;
-  font-size: 16px;
-  color: #333;
+  font-weight: 600;
+  font-size: 20px;
+  color: #1a1a1a;
   text-decoration: none;
   min-width: 140px;
+  letter-spacing: -0.5px;
+  transition: color 0.2s ease;
+}
+
+.logo:hover {
+  color: #e91e63;
 }
 
 .logo-img {
@@ -40,18 +47,21 @@ nav {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin-right: 35px;
+  margin-right: 20px;
 }
 
 .links a {
   text-decoration: none;
-  font-size: 14px;
-  color: #333;
-  transition: color 0.2s ease;
+  font-size: 15px;
+  font-weight: 500;
+  color: #444;
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
 }
 
 .links a:hover {
   color: #e91e63;
+  transform: translateY(-1px);
 }
 
 /* Actions (signup + profile) */
@@ -63,19 +73,23 @@ nav {
 }
 
 .signup-btn {
-  padding: 6px 12px;
+  padding: 8px 16px;
   background: #e91e63;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   margin-right: 20px;
   white-space: nowrap;
+  letter-spacing: -0.2px;
 }
 
 .signup-btn:hover {
   background: #c2185b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
 }
 
 .profile-icon {
@@ -92,15 +106,19 @@ nav {
   border: none;
   padding: 0;
   margin: 0;
-  font-size: 14px;
-  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  color: #444;
   cursor: pointer;
   text-decoration: none;
+  letter-spacing: -0.2px;
+  transition: all 0.2s ease;
 }
 
 .logout-btn:hover,
 .links button:hover {
   color: #e91e63;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 600px) {

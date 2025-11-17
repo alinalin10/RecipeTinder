@@ -19,7 +19,17 @@ export const updateUserPreferences = async (userId, preferences) => {
       return { message: 'Preferences saved locally', preferences: updatedPrefs };
     }
 
-    return await response.json();
+    // Check if response has content before parsing
+    const text = await response.text();
+    if (!text || text.trim() === '') {
+      // Empty response, save to localStorage and return success
+      const existingPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+      const updatedPrefs = { ...existingPrefs, ...preferences };
+      localStorage.setItem('userPreferences', JSON.stringify(updatedPrefs));
+      return { message: 'Preferences saved', preferences: updatedPrefs };
+    }
+
+    return JSON.parse(text);
   } catch (error) {
     console.error('Error updating preferences, using localStorage fallback:', error);
     // Fallback to localStorage when backend is not available
@@ -44,7 +54,18 @@ export const getUserPreferences = async (userId) => {
       };
     }
 
-    return await response.json();
+    // Check if response has content before parsing
+    const text = await response.text();
+    if (!text || text.trim() === '') {
+      // Empty response, return default structure
+      const storedPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+      return {
+        dietary: storedPrefs.dietary || { diets: [], excludeIngredients: [] },
+        cuisines: storedPrefs.cuisines || { like: [], dislike: [] }
+      };
+    }
+
+    return JSON.parse(text);
   } catch (error) {
     console.error('Error fetching preferences, using localStorage fallback:', error);
     // Fallback to localStorage when backend is not available

@@ -1,6 +1,7 @@
 "use client";
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useSignup } from '../../../hooks/useSignup'
+import { useRouter } from 'next/navigation'
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
@@ -20,6 +21,15 @@ const Signup = () => {
             router.push('/')
         }
     }
+
+    // Redirect to user preferences page after successful signup
+    useEffect(() => {
+        if (success) {
+            setTimeout(() => {
+                router.push('/user-pref')
+            }, 1500) // Slightly longer delay to show success message
+        }
+    }, [success, router])
     
     return (
         <div className="min-h-screen h-screen flex bg-white overflow-hidden">

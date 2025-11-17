@@ -76,15 +76,26 @@ const updateUserPreferences = async (req, res) => {
     const { dietary, cuisines } = req.body;
 
     try {
-        // Find user and update preferences
+        // Build update object - only include fields that are provided
+        const updateFields = {};
+
+        if (dietary !== undefined) {
+            updateFields['preferences.dietary'] = dietary;
+        }
+
+        if (cuisines !== undefined) {
+            updateFields['preferences.cuisines'] = cuisines;
+        }
+
+        // If no fields to update, return error
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(400).json({ error: 'No preferences provided to update' });
+        }
+
+        // Find user and update preferences (only the provided fields)
         const user = await User.findByIdAndUpdate(
             userId,
-            {
-                $set: {
-                    'preferences.dietary': dietary,
-                    'preferences.cuisines': cuisines
-                }
-            },
+            { $set: updateFields },
             { new: true, runValidators: true }
         );
 

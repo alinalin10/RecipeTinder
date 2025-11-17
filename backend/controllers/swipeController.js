@@ -6,9 +6,8 @@ const User = require('../models/userModel');
 // Save/Update a recipe
 const saveRecipe = async (req, res) => {
     try {
-        const { recipeId, recipeType, action, recipeTitle, image } = req.body;
-        console.log('Request body:', req.body);
-        const userId = req.user.id;
+        const { recipeId, recipeType, action, recipeTitle, recipeImage } = req.body;
+        const userId = req.user._id;
         
         // Validate senum values (schema doesn't enforce these)
         if (recipeType && !['spoonacular', 'userMade'].includes(recipeType)) {
@@ -25,50 +24,34 @@ const saveRecipe = async (req, res) => {
 
         // Use findOneAndUpdate with upsert to avoid duplicates
         const savedRecipe = await SavedRecipe.findOneAndUpdate(
-            { 
-                UserId: userId, 
-                recipeId: recipeId 
+            {
+                UserId: userId,
+                recipeId: recipeId
             },
-            { 
+            {
                 UserId: userId,
                 recipeId,
                 recipeType,
                 action,
                 recipeTitle,
-                savedAt: new Date(),
-                image
+                recipeImage: recipeImage || null,
+                savedAt: new Date()
             },
-            { 
-                upsert: true, 
+            {
+                upsert: true,
                 new: true,
                 setDefaultsOnInsert: true
             }
         );
 
-        console.log('Saving recipe to DB:', {
-            UserId: userId,
-            recipeId,
-            recipeType,
-            action,
-            recipeTitle,
-            savedAt: new Date(),
-            image
-        });
-
-
-        // Update the user's recipes array
-        const updatedUser = await User.findByIdAndUpdate(
+        // Update user's savedRecipes array (add reference if not already present)
+        await User.findByIdAndUpdate(
             userId,
-            { 
-                $addToSet: { 
-                    savedRecipes: savedRecipe._id
-                } 
-            },
+            { $addToSet: { savedRecipes: savedRecipe._id } }, // $addToSet prevents duplicates
             { new: true }
         );
 
-        
-        res.json({ success: true, savedRecipe, userRecipes: updatedUser });
+        res.json({ success: true, savedRecipe });
     } catch (error) {
         // Handle duplicate key error
         if (error.code === 11000) {
@@ -83,7 +66,7 @@ const saveRecipe = async (req, res) => {
 // Get all saved recipes for current user with filtering and sorting
 const getSavedRecipes = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const { 
             action,           // Filter: 'liked' or 'bookmarked'
             alphabetical,     // Sort: 'true' for alphabetical, 'false' or undefined for newest first
@@ -142,24 +125,31 @@ const getSavedRecipes = async (req, res) => {
 // Delete a saved recipe
 const deleteSavedRecipe = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const { recipeId } = req.params;
         
         const deletedRecipe = await SavedRecipe.findOneAndDelete({
             UserId: userId,
             recipeId
         });
-        
+
         if (!deletedRecipe) {
-            return res.status(404).json({ 
-                error: 'Recipe not found in saved recipes' 
+            return res.status(404).json({
+                error: 'Recipe not found in saved recipes'
             });
         }
-        
-        res.json({ 
-            success: true, 
+
+        // Remove reference from user's savedRecipes array
+        await User.findByIdAndUpdate(
+            userId,
+            { $pull: { savedRecipes: deletedRecipe._id } }, // $pull removes the reference
+            { new: true }
+        );
+
+        res.json({
+            success: true,
             message: 'Recipe removed from saved recipes',
-            deletedRecipe 
+            deletedRecipe
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

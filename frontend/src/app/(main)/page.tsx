@@ -31,25 +31,37 @@ export default function Home() {
   const userRecipes = recipesContext?.recipes || [];
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   // Load random recipes when page loads
   useEffect(() => {
-    getRandomRecipes(10); // Fetch 10 random recipes from Spoonacular
+    console.log('📲 Initial load - fetching 15 recipes');
+    getRandomRecipes(15); // Fetch 15 random recipes
   }, []);
 
   // Function to handle when cards run out - automatically fetch more
   const handleCardsEmpty = () => {
-    console.log("Cards empty, fetching more recipes...");
+    console.log("🔄 Cards empty, automatically fetching more recipes...");
     setIsRefreshing(true);
-    getRandomRecipes(10);
+    getRandomRecipes(15); // Fetch 15 more recipes
   };
 
   // Reset refreshing state when new recipes arrive
   useEffect(() => {
     if (cardData.length > 0 && isRefreshing) {
+      console.log('✅ New recipes loaded, refreshing complete');
       setIsRefreshing(false);
     }
   }, [cardData.length, isRefreshing]);
+
+  // Auto-trigger refresh when running low on cards (when 2 or fewer cards left)
+  useEffect(() => {
+    if (cardData.length <= 2 && cardData.length > 0 && !loading && !isRefreshing) {
+      console.log(`⚠️  Running low on cards (${cardData.length} left), pre-fetching more...`);
+      setIsRefreshing(true);
+      getRandomRecipes(15);
+    }
+  }, [cardData.length, loading, isRefreshing]);
 
   // Fisher-Yates shuffle algorithm for unbiased randomization
   const fisherYatesShuffle = <T,>(array: T[]): T[] => {
@@ -76,6 +88,12 @@ export default function Home() {
 
   // Transform and merge both Spoonacular and user recipes
   useEffect(() => {
+    // Wait for both Spoonacular recipes to finish loading on initial load
+    // This prevents the flash of user recipes before Spoonacular loads
+    if (initialLoad && loading) {
+      return; // Don't update cards yet
+    }
+
     // Transform Spoonacular recipes
     const spoonacularCards: CardData[] = (recipes && recipes.length > 0)
       ? recipes.map((recipe) => ({
@@ -121,8 +139,13 @@ export default function Home() {
 
     setCardData(finalShuffled);
 
+    // Mark initial load as complete
+    if (initialLoad && !loading) {
+      setInitialLoad(false);
+    }
+
     console.log(`🎲 Shuffled ${spoonacularCards.length} Spoonacular + ${userCards.length} User recipes`);
-  }, [recipes, userRecipes]);
+  }, [recipes, userRecipes, loading, initialLoad]);
 
   // Error state
   if (error && cardData.length === 0) {

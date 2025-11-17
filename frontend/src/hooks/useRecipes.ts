@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react'
+import { useAuthContext } from './useAuthContext'
 
 // Define the shape of a recipe from Spoonacular API
 export interface Recipe {
@@ -64,12 +65,13 @@ export const useRecipes = (): UseRecipesReturn => {
     const [recipes, setRecipes] = useState<Recipe[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
+    const { user } = useAuthContext()
 
     const clearError = (): void => {
         setError(null)
     }
 
-    // Get random recipes
+    // Get random recipes (personalized if user is logged in)
     const getRandomRecipes = async (number: number = 10, tags: string = ''): Promise<void> => {
         setLoading(true)
         setError(null)
@@ -80,8 +82,15 @@ export const useRecipes = (): UseRecipesReturn => {
                 ...(tags && { tags })
             })
 
+            // Include auth token if user is logged in for personalized recommendations
+            const headers: HeadersInit = {}
+            if (user?.token) {
+                headers['Authorization'] = `Bearer ${user.token}`
+            }
+
             const response = await fetch(
-                `http://localhost:4000/api/recipes/random?${params}`
+                `http://localhost:4000/api/recipes/random?${params}`,
+                { headers }
             )
             const json = await response.json()
 
