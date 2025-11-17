@@ -52,7 +52,7 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
 
     const router = useRouter()
 
-    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string) => {
+    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, image: string) => {
         // token is stored inside localStorage.user as a JSON string { token: '...', ... }
         let token: string | null = null
         try {
@@ -65,7 +65,7 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
             console.warn('Failed to parse stored user object', e)
         }
 
-        console.log('Attempting to save recipe:', { recipeId, recipeType, recipeTitle, action })
+        console.log('Attempting to save recipe:', { recipeId, recipeType, recipeTitle, action, image })
         console.log('Token exists:', !!token)
 
         if (!token) {
@@ -85,7 +85,8 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
                 recipeId: recipeId,
                 recipeType: recipeType,
                 recipeTitle: recipeTitle,
-                action: action
+                action: action,
+                image: image
             })
         })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,9 +124,10 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
             if (direction === 1) {
                 const recipeId = id || _id;
                 const recipeTitle = name || title;
+                const recipeImage = image;
                 if (recipeId && recipeTitle) {
                     try {
-                        await saveRecipe(recipeId, recipeType, recipeTitle, 'liked');
+                        await saveRecipe(recipeId, recipeType, recipeTitle, 'liked', recipeImage);
                     } catch (err) {
                         // Don't crash the UI if saving fails. Log and optionally show a toast in the future.
                         console.error('saveRecipe failed', err);
