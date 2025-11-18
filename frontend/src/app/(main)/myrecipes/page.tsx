@@ -1,16 +1,70 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSavedRecipesContext } from '@/hooks/useSavedRecipesContext';
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&h=600&fit=crop';
 
 export default function MyRecipesPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('all');
-  const { savedRecipes } = useSavedRecipesContext();
+  const [savedRecipes, setSavedRecipes ]= useState([]);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     console.log('Saved recipes updated in MyRecipesPage:', savedRecipes);
   }, [savedRecipes]);
+
+  const fetchSavedRecipes = async () => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        console.log('No user found');
+        return;
+      }
+      
+      const userObj = JSON.parse(userStr);
+      const token = userObj?.token;
+      
+      if (!token) {
+        console.log('No token found');
+        return;
+      }
+
+      console.log('🔄 Fetching saved recipes...');
+
+      const response = await fetch('http://localhost:4000/api/swipe/', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch saved recipes');
+      }
+
+      const data = await response.json();
+      console.log('✅ Saved recipes fetched:', data);
+      
+      setSavedRecipes(data.recipes || []);
+    } catch (error) {
+      console.error('❌ Failed to fetch recipes:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSavedRecipes();
+  }, []);
+
+  // Refetch when page comes back into focus
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('🔄 Page focused, refetching...');
+      fetchSavedRecipes();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
 
   const normalizeId = (id: string | number) => String(id);
 
@@ -34,6 +88,10 @@ export default function MyRecipesPage() {
       return 0;
     });
 
+  const handleImageError = (recipeId: string) => {
+    setImageErrors(prev => new Set(prev).add(recipeId));
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto p-8">
@@ -50,7 +108,6 @@ export default function MyRecipesPage() {
             >
               <option value="all">All Recipes</option>
               <option value="name">Sort by Name</option>
-              <option value="bookmarked">Bookmarked</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,6 +131,9 @@ export default function MyRecipesPage() {
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {sortedRecipes.map((recipe: any) => {
             const idForUI = normalizeId(recipe._id);
+            const hasImageError = imageErrors.has(idForUI);
+            const imageUrl = hasImageError ? FALLBACK_IMAGE : (recipe.image || FALLBACK_IMAGE);
+
             return (
               <div
                 key={idForUI}
@@ -81,9 +141,10 @@ export default function MyRecipesPage() {
                 style={{ backgroundColor: '#FAFAF5' }}
               >
                 <img
-                  src={recipe.image}
+                  src={imageUrl}
                   alt={recipe.recipeTitle}
                   className="w-full h-64 object-cover rounded-lg mb-4"
+                  onError={() => handleImageError(idForUI)}
                 />
 
                 <h2 className="text-lg font-semibold mb-3 text-black">{recipe.recipeTitle}</h2>
@@ -118,6 +179,12 @@ export default function MyRecipesPage() {
             );
           })}
         </div>
+        {sortedRecipes.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            <p className="text-xl">No saved recipes yet!</p>
+            <p className="mt-2">Start swiping to save your favorite recipes.</p>
+          </div>
+        )}
       </div>
     </div>
   );

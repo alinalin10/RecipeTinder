@@ -1,5 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import Link from 'next/link'
 import styles from './swipeCards.module.css';
@@ -43,6 +44,9 @@ interface CardProps {
     fullRecipeData?: any;
 }
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&h=600&fit=crop';
+const BACK_CARD_OPACITY = 0.8;
+
 // Creates card component (id = place on stack, url/image = image, name/title = food, user = uploader, rating = rating, date = date uploaded, recipe = link to recipe, index = used to organize stack)
 const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating, difficulty, date, time, recipe, recipeType = 'userMade', index, fullRecipeData }: CardProps) => {
     // As card moves left and right it rotates sideways and also starts to disappear
@@ -51,6 +55,8 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
     const rotate = useTransform(x, [-250, 250], [-18, 18])
 
     const router = useRouter()
+
+    const [imgError, setImgError] = useState(false);
 
     const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, image: string) => {
         // token is stored inside localStorage.user as a JSON string { token: '...', ... }
@@ -114,8 +120,8 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
 
             animate(x, direction * 600, {
                 type: 'spring',
-                stiffness: 200,
-                damping: 25,
+                stiffness: 300,
+                damping: 30,
                 onComplete: () => {
                     setCards((prev: CardData[]) => prev.filter((v: CardData) => (v.id || v._id) !== (id || _id)));
                 }
@@ -139,7 +145,7 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
         }
     }
 
-    const imageUrl = url || image;
+    const imageUrl = url || image || FALLBACK_IMAGE;
     const recipeName = name || title;
     const cardId = id || _id;
 
@@ -150,12 +156,15 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
     // Contains all card info
     // Only show the top card (last in array) and allow dragging only on top card
     const isTopCard = index === cards.length - 1;
+    const isSecondCard = index === cards.length - 2;
+
+    const cardOpacity = isTopCard ? opacity : (isSecondCard ? BACK_CARD_OPACITY : 0);
 
     return <motion.div
         className={styles['card']}
         style={{
             x,
-            opacity: isTopCard ? opacity : 0,
+            opacity: cardOpacity,
             rotate,
             zIndex: index,
             pointerEvents: isTopCard ? 'auto' : 'none'
@@ -167,7 +176,12 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
         }}
         onDragEnd={handleDragEnd}
     >
-        <img src={imageUrl} alt={recipeName} className={styles['card-image']} />
+        <img 
+            src={imgError ? FALLBACK_IMAGE : imageUrl} 
+            alt={recipeName} 
+            className={styles['card-image']}
+            onError={() => setImgError(true)}
+        />
         <div className={styles['card-content']}>
             <h1 className={styles['recipe-name']}>{recipeName}</h1>
             <div className={styles['same-row']}>

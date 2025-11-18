@@ -4,13 +4,18 @@ import React from 'react'
 import { useRecipesInfoContext } from '../../../../hooks/useRecipesContext';
 import styles from './recipe-description.module.css';
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&h=600&fit=crop';
+
 const RecipeDescription = () => {
     const { id } = useParams();
     const { recipes } = useRecipesInfoContext();
+    const [imgError, setImgError] = React.useState(false);
 
     // Find recipe by either _id or id field
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const recipe = recipes?.find((r: any) => r._id === id || r.id === id);
+
+    const imageUrl = imgError ? FALLBACK_IMAGE : (recipe?.image || FALLBACK_IMAGE);
 
     if (!recipe) {
         return (
@@ -39,7 +44,12 @@ const RecipeDescription = () => {
     return (
         <div className={styles['recipe_description_page']}>
             <div className={styles['picture']}>
-                <img src={recipe.image} alt={recipe.title} className={styles['image']} />
+                <img 
+                    src={imageUrl} 
+                    alt={recipe.title} 
+                    className={styles['image']}
+                    onError={() => setImgError(true)}
+                />
             </div>
 
             <h1 className={styles['food_name']}>{recipe.title}</h1>
