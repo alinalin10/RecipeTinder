@@ -243,7 +243,7 @@ export default function MyRecipesPage() {
             <div
               key={recipe._id}
               className="rounded-xl p-4 shadow hover:shadow-lg transition-shadow"
-              style={{ backgroundColor: '#f5f1e8' }}
+              style={{ backgroundColor: '#FAFAF5' }}
             >
               <div className="relative">
                 {recipe.recipeImage ? (
