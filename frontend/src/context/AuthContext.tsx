@@ -6,6 +6,9 @@ export interface User {
     userId: string;
     email: string;
     token: string;
+    username: string;
+    userId: string;
+    createdAt?: string;
     // Add other user properties as needed
 }
 

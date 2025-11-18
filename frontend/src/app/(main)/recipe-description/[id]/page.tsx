@@ -1,23 +1,62 @@
 'use client';
 import { useParams } from 'next/navigation';
-import React from 'react'
-import { useRecipesInfoContext } from '../../../../hooks/useRecipesContext';
+import React, { useEffect, useState } from 'react';
 import styles from './recipe-description.module.css';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&h=600&fit=crop';
 
 const RecipeDescription = () => {
-    const { id } = useParams();
-    const { recipes } = useRecipesInfoContext();
-    const [imgError, setImgError] = React.useState(false);
+    const params = useParams();
+    const id = params?.id as string;
+    const [recipe, setRecipe] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [imgError, setImgError] = useState(false);
 
-    // Find recipe by either _id or id field
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const recipe = recipes?.find((r: any) => r._id === id || r.id === id);
+    useEffect(() => {
+        const fetchRecipe = async () => {
+            try {
+                console.log('Fetching recipe with ID:', id);
+
+                // Fetch from /api/userrecipes endpoint
+                const response = await fetch(`http://localhost:4000/api/userrecipes/${id}`);
+
+                if (!response.ok) {
+                    throw new Error('Recipe not found');
+                }
+
+                const data = await response.json();
+                console.log('Fetched recipe:', data);
+                setRecipe(data);
+            } catch (err) {
+                console.error('Error fetching recipe:', err);
+                setError(err instanceof Error ? err.message : 'Failed to load recipe');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchRecipe();
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+            }}>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+            </div>
+        );
+    }
 
     const imageUrl = imgError ? FALLBACK_IMAGE : (recipe?.image || FALLBACK_IMAGE);
 
-    if (!recipe) {
+    if (error || !recipe) {
         return (
             <div style={{
                 display: 'flex',
@@ -31,11 +70,13 @@ const RecipeDescription = () => {
                 textAlign: 'center'
             }}>
                 <div style={{ fontSize: '60px', marginBottom: '20px' }}>🍳</div>
-                <p style={{ marginBottom: '10px', fontSize: '20px' }}>Recipe not found in your saved recipes</p>
+                <p style={{ marginBottom: '10px', fontSize: '20px' }}>Recipe not found</p>
                 <p style={{ fontSize: '14px', color: '#999' }}>
-                    This recipe may be from an external source.
+                    {error || 'This recipe may have been deleted or does not exist.'}
                     <br />
-                    Try swiping right to save it, or go back to browse more recipes.
+                    <a href="/myrecipes" style={{ color: '#ff6b6b', textDecoration: 'underline' }}>
+                        Go back to My Recipes
+                    </a>
                 </p>
             </div>
         );

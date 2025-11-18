@@ -21,9 +21,7 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         }
     }
 
-
-
-      const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, image: string) => {
+      const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, recipeImage?: string) => {
         // Get the user object from localStorage and extract the token
         const userJson = localStorage.getItem('user');
         const token = userJson ? JSON.parse(userJson).token : null;
@@ -49,8 +47,8 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
                 recipeId: recipeId,
                 recipeType: recipeType,
                 recipeTitle: recipeTitle,
-                action: action,
-                image: image
+                recipeImage: recipeImage,
+                action: action
             })
         })
 
@@ -93,16 +91,16 @@ const SwipeCards = ({ cardData, onCardsEmpty }: { cardData: CardData[], onCardsE
         if (!topCard) return;
         const recipeId = topCard._id || topCard.id;
         const recipeTitle = topCard.name || topCard.title;
-        const image = topCard.image;
+        const recipeImage = topCard.url || topCard.image;
 
         if (recipeId && recipeTitle) {
             try {
-                const saved = await saveRecipe(
+                await saveRecipe(
                     recipeId,
                     topCard.recipeType || 'userMade',
                     recipeTitle,
                     'liked',
-                    image
+                    recipeImage
                 );
             } catch (err) {
                 console.error("Error saving recipe:", err);

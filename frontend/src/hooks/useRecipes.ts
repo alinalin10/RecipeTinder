@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react'
+import { useAuthContext } from './useAuthContext'
 
 // Define the shape of a recipe from Spoonacular API
 export interface Recipe {
@@ -54,7 +55,7 @@ interface UseRecipesReturn {
     error: string | null;
     clearError: () => void;
     getRandomRecipes: (number?: number, tags?: string) => Promise<void>;
-    searchRecipes: (query: string, cuisine?: string, diet?: string, intolerances?: string, number?: number) => Promise<void>;
+    searchRecipes: (query: string, cuisine?: string, diet?: string, intolerances?: string, excludeIngredients?: string, number?: number) => Promise<void>;
     getRecipeById: (id: string | number) => Promise<Recipe | null>;
     getSimilarRecipes: (id: string | number, number?: number) => Promise<void>;
     findByIngredients: (ingredients: string, number?: number) => Promise<void>;
@@ -64,12 +65,13 @@ export const useRecipes = (): UseRecipesReturn => {
     const [recipes, setRecipes] = useState<Recipe[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
+    const { user } = useAuthContext()
 
     const clearError = (): void => {
         setError(null)
     }
 
-    // Get random recipes
+    // Get random recipes (personalized if user is logged in)
     const getRandomRecipes = async (number: number = 10, tags: string = ''): Promise<void> => {
         setLoading(true)
         setError(null)
@@ -80,8 +82,15 @@ export const useRecipes = (): UseRecipesReturn => {
                 ...(tags && { tags })
             })
 
+            // Include auth token if user is logged in for personalized recommendations
+            const headers: HeadersInit = {}
+            if (user?.token) {
+                headers['Authorization'] = `Bearer ${user.token}`
+            }
+
             const response = await fetch(
-                `http://localhost:4000/api/recipes/random?${params}`
+                `http://localhost:4000/api/recipes/random?${params}`,
+                { headers }
             )
             const json = await response.json()
 
@@ -109,6 +118,7 @@ export const useRecipes = (): UseRecipesReturn => {
         cuisine: string = '',
         diet: string = '',
         intolerances: string = '',
+        excludeIngredients: string = '',
         number: number = 10
     ): Promise<void> => {
         setLoading(true)
@@ -126,7 +136,8 @@ export const useRecipes = (): UseRecipesReturn => {
                 number: number.toString(),
                 ...(cuisine && { cuisine }),
                 ...(diet && { diet }),
-                ...(intolerances && { intolerances })
+                ...(intolerances && { intolerances }),
+                ...(excludeIngredients && { excludeIngredients })
             })
 
             const response = await fetch(

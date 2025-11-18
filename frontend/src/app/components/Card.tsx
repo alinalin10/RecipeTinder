@@ -58,7 +58,7 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
 
     const [imgError, setImgError] = useState(false);
 
-    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, image: string) => {
+    const saveRecipe = async (recipeId: number | string, recipeType: string, recipeTitle: string, action: string, recipeImage?: string) => {
         // token is stored inside localStorage.user as a JSON string { token: '...', ... }
         let token: string | null = null
         try {
@@ -71,15 +71,31 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
             console.warn('Failed to parse stored user object', e)
         }
 
-        console.log('Attempting to save recipe:', { recipeId, recipeType, recipeTitle, action, image })
+        console.log('==========================================')
+        console.log('💾 ATTEMPTING TO SAVE RECIPE')
+        console.log('Recipe ID:', recipeId)
+        console.log('Recipe Type:', recipeType, recipeType === 'userMade' ? '👤 USER-MADE' : '🌐 SPOONACULAR')
+        console.log('Recipe Title:', recipeTitle)
+        console.log('Action:', action)
+        console.log('Has Image:', !!recipeImage)
         console.log('Token exists:', !!token)
+        console.log('==========================================')
 
         if (!token) {
-            // If user is not authenticated, send them to signup/login instead of attempting the API call
-            console.info('User not authenticated — redirecting to /signup')
+            console.error('❌ User not authenticated — redirecting to /signup')
             router.push('/signup')
             return
         }
+
+        const payload = {
+            recipeId: recipeId,
+            recipeType: recipeType,
+            recipeTitle: recipeTitle,
+            recipeImage: recipeImage,
+            action: action
+        }
+
+        console.log('📤 Sending payload:', JSON.stringify(payload, null, 2))
 
         const response = await fetch('http://localhost:4000/api/swipe/save', {
             method: 'POST',
@@ -87,29 +103,27 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                recipeId: recipeId,
-                recipeType: recipeType,
-                recipeTitle: recipeTitle,
-                action: action,
-                image: image
-            })
+            body: JSON.stringify(payload)
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+        console.log('📡 Response status:', response.status, response.statusText)
+
         let data: any = {}
         try {
             data = await response.json()
+            console.log('📥 Response data:', data)
         } catch (err) {
-            // response had no JSON body
+            console.warn('⚠️  No JSON response body')
             data = {}
         }
 
         if (!response.ok) {
-            console.error('Failed to save recipe:', response.status, data)
+            console.error('❌ Failed to save recipe:', response.status, data)
             throw new Error(`Failed to save recipe: ${data.error || response.statusText}`)
         }
 
-        console.log('Recipe saved successfully:', data)
+        console.log('✅ Recipe saved successfully!', data)
+        console.log('==========================================')
     }
 
     // Front card disappears when dragged and let go
@@ -130,10 +144,10 @@ const Card = ({ id, _id, url, image, cards, setCards, name, title, user, rating,
             if (direction === 1) {
                 const recipeId = id || _id;
                 const recipeTitle = name || title;
-                const recipeImage = image;
+                const recipeImageUrl = url || image;
                 if (recipeId && recipeTitle) {
                     try {
-                        await saveRecipe(recipeId, recipeType, recipeTitle, 'liked', recipeImage);
+                        await saveRecipe(recipeId, recipeType, recipeTitle, 'liked', recipeImageUrl);
                     } catch (err) {
                         // Don't crash the UI if saving fails. Log and optionally show a toast in the future.
                         console.error('saveRecipe failed', err);

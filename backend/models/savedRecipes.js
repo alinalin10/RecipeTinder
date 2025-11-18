@@ -7,11 +7,10 @@ const savedRecipesSchema = new Schema({
     recipeType: { type: String, enum: ['spoonacular', 'userMade'], required: true }, // tells where recipe comes from (spoonacular API or user-created)
     action: {type: String, enum: ['liked', 'bookmarked'], required: true},
     savedAt: {type: Date, default: Date.now},
-    
-    // Store title here for easy sorting (denormalization for performance)
-    recipeTitle: {type: String, required: true},
 
-    image: {type: String}
+    // Store title and image for easy access (denormalization for performance)
+    recipeTitle: {type: String, required: true},
+    recipeImage: {type: String} // Store image URL
 }, {
     timestamps: true  // Adds createdAt and updatedAt automatically
 });

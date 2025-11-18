@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, useEffect } from 'react'
 import { useLogin } from '../../../hooks/useLogin'
+import { useRouter } from 'next/navigation'
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
@@ -22,6 +23,15 @@ const Login = () => {
         e.preventDefault()
         await login(email, password)
     }
+
+    // Redirect to main page after successful login
+    useEffect(() => {
+        if (success) {
+            setTimeout(() => {
+                router.push('/')
+            }, 1000) // Small delay to show success message
+        }
+    }, [success, router])
 
     return (
         <div className="min-h-screen h-screen flex bg-white overflow-hidden -mt-4">

@@ -17,6 +17,11 @@ const userRecipes = new Schema({
     steps: { type: [String] },
     image: { type: String },
     ingredients: { type: [String] },
+
+    // New fields for recommendation system
+    diet: { type: [String] }, // e.g., ["vegan", "gluten free"]
+    allergens: { type: [String] }, // e.g., ["dairy", "nuts"]
+    tags: { type: [String] }, // e.g., ["quick", "easy", "spicy"]
 }, {
   timestamps: true
 });

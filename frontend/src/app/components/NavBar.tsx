@@ -38,10 +38,12 @@ export default function NavBar() {
       </div>
 
      {/* Sign up / User */}
-       <Link href="/signup" className="signup-btn">Sign Up</Link>
-       <Link href="/user-pref">
-        <img src="/UserImage.png" alt="User Profile" className="profile-icon" />
-       </Link>
+       {!user && <Link href="/signup" className="signup-btn">Sign Up</Link>}
+       {user && (
+         <Link href="/user-pref">
+          <img src="/UserImage.png" alt="User Profile" className="profile-icon" />
+         </Link>
+       )}
      </div>
     
    </nav>
