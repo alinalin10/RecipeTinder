@@ -3,12 +3,15 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import styles from './recipe-description.module.css';
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&h=600&fit=crop';
+
 const RecipeDescription = () => {
     const params = useParams();
     const id = params?.id as string;
     const [recipe, setRecipe] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [imgError, setImgError] = useState(false);
 
     useEffect(() => {
         const fetchRecipe = async () => {
@@ -51,6 +54,8 @@ const RecipeDescription = () => {
         );
     }
 
+    const imageUrl = imgError ? FALLBACK_IMAGE : (recipe?.image || FALLBACK_IMAGE);
+
     if (error || !recipe) {
         return (
             <div style={{
@@ -80,7 +85,12 @@ const RecipeDescription = () => {
     return (
         <div className={styles['recipe_description_page']}>
             <div className={styles['picture']}>
-                <img src={recipe.image} alt={recipe.title} className={styles['image']} />
+                <img 
+                    src={imageUrl} 
+                    alt={recipe.title} 
+                    className={styles['image']}
+                    onError={() => setImgError(true)}
+                />
             </div>
 
             <h1 className={styles['food_name']}>{recipe.title}</h1>
