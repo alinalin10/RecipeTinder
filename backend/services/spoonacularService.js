@@ -24,7 +24,7 @@ const getRandomRecipes = async (number = 5, tags = '') => {
 };
 
 // Search recipes by query
-const searchRecipes = async (query, cuisine = '', diet = '', intolerances = '', number = 5) => {
+const searchRecipes = async (query, cuisine = '', diet = '', intolerances = '', excludeIngredients = '', number = 5) => {
     try {
         const response = await axios.get(`${BASE_URL}/complexSearch`, {
             params: {
@@ -33,6 +33,7 @@ const searchRecipes = async (query, cuisine = '', diet = '', intolerances = '', 
                 cuisine: cuisine,
                 diet: diet,
                 intolerances: intolerances,
+                excludeIngredients: excludeIngredients,
                 number: number,
                 addRecipeInformation: true,
                 fillIngredients: true

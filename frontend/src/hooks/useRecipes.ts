@@ -55,7 +55,7 @@ interface UseRecipesReturn {
     error: string | null;
     clearError: () => void;
     getRandomRecipes: (number?: number, tags?: string) => Promise<void>;
-    searchRecipes: (query: string, cuisine?: string, diet?: string, intolerances?: string, number?: number) => Promise<void>;
+    searchRecipes: (query: string, cuisine?: string, diet?: string, intolerances?: string, excludeIngredients?: string, number?: number) => Promise<void>;
     getRecipeById: (id: string | number) => Promise<Recipe | null>;
     getSimilarRecipes: (id: string | number, number?: number) => Promise<void>;
     findByIngredients: (ingredients: string, number?: number) => Promise<void>;
@@ -118,6 +118,7 @@ export const useRecipes = (): UseRecipesReturn => {
         cuisine: string = '',
         diet: string = '',
         intolerances: string = '',
+        excludeIngredients: string = '',
         number: number = 10
     ): Promise<void> => {
         setLoading(true)
@@ -135,7 +136,8 @@ export const useRecipes = (): UseRecipesReturn => {
                 number: number.toString(),
                 ...(cuisine && { cuisine }),
                 ...(diet && { diet }),
-                ...(intolerances && { intolerances })
+                ...(intolerances && { intolerances }),
+                ...(excludeIngredients && { excludeIngredients })
             })
 
             const response = await fetch(

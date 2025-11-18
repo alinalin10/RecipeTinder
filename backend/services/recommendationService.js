@@ -27,15 +27,15 @@ const getPersonalizedRecommendations = async (userPreferences, number = 10) => {
         const { diets = [], allergies = [], excludeIngredients = [] } = dietary;
         const { like: preferredCuisines = [] } = cuisines;
 
-        // Combine allergies and excluded ingredients (highest priority - hard filter)
+        // Combine allergies and excluded ingredients for filtering user-made recipes
         const excludedItems = [...new Set([...allergies, ...excludeIngredients])];
 
-        // Build Spoonacular API parameters
+        // Build Spoonacular API parameters (separate intolerances from excluded ingredients)
         const spoonacularParams = {
             diet: diets.join(',').toLowerCase(),
             cuisine: preferredCuisines.join(','),
-            intolerances: excludedItems.join(','),
-            excludeIngredients: excludedItems.join(','),
+            intolerances: allergies.join(','),  // Allergies/intolerances only
+            excludeIngredients: excludeIngredients.join(','),  // Excluded ingredients only
             number: Math.ceil(number * 0.5) // Get 50% from Spoonacular, rest from user-made
         };
 
@@ -49,6 +49,7 @@ const getPersonalizedRecommendations = async (userPreferences, number = 10) => {
                 spoonacularParams.cuisine,
                 spoonacularParams.diet,
                 spoonacularParams.intolerances,
+                spoonacularParams.excludeIngredients,
                 spoonacularParams.number
             );
         } catch (error) {

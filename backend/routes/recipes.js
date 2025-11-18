@@ -57,16 +57,16 @@ router.get('/random', async (req, res) => {
 });
 
 // GET /api/recipes/search - Search recipes
-// Query params: query, cuisine, diet, intolerances, number
+// Query params: query, cuisine, diet, intolerances, excludeIngredients, number
 router.get('/search', async (req, res) => {
     try {
-        const { query, cuisine = '', diet = '', intolerances = '', number = 10 } = req.query;
+        const { query, cuisine = '', diet = '', intolerances = '', excludeIngredients = '', number = 10 } = req.query;
 
         if (!query) {
             return res.status(400).json({ success: false, error: 'Query parameter is required' });
         }
 
-        const recipes = await searchRecipes(query, cuisine, diet, intolerances, number);
+        const recipes = await searchRecipes(query, cuisine, diet, intolerances, excludeIngredients, number);
         res.status(200).json({ success: true, data: recipes });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
