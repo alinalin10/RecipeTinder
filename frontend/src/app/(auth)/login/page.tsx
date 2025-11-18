@@ -4,7 +4,6 @@ import { useState, FormEvent, useEffect } from 'react'
 import { useLogin } from '../../../hooks/useLogin'
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
 
 const Login = () => {
     const [email, setEmail] = useState('')
